@@ -1,0 +1,27 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-05T22:34:46.911Z",
+  "summary": "Frontend adds clear-all controls (with destructive buttons, confirmation-dialog imports/state, and React Query mutations that call new backend methods and invalidate caches) for both Visitor Messages and Recruiter Visits. Backend changes are truncated; password constant is present, but the diff snippet does not show the required clear/purge methods, so backend fulfillment cannot be fully verified from provided evidence.",
+  "missing_requirements": [
+    {
+      "id": "REQ-18",
+      "requirement": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs (using the same owner password-check mechanism as existing getVisitorMessages/getRecruiterVisits), such that subsequent reads return empty arrays.",
+      "reason": "The backend diff is truncated before the owner-only methods area; the summary does not show implementations of clearVisitorMessages(password) / clearRecruiterVisits(password) nor the logic that purges the underlying List state and enforces the existing password check.",
+      "evidence": [
+        "backend/main.mo (truncated; owner-only methods section cut off)"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.55,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+    "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+    "frontend/src/hooks/useRecruiterVisit.ts",
+    "frontend/src/hooks/useVisitorMessages.ts",
+    "project_state.json"
+  ]
+}

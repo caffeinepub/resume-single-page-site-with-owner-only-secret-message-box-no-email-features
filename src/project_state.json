@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 9,
+  "summary": "Build a modern single-page resume website for Hatem Alsakhboori with minimalist navy/gold design, smooth navigation, dynamic hover/scroll animations, a page-load recruiter prompt with recruiter visit logging, a visitor message box collecting name/email/message stored in the Motoko backend (no email sending), and a single unified owner access panel entered via clicking the corner name (password: BirdOnTree3) to view visitor message logs (“learn more” messages) and recruiter logs and edit site content (including an editable Projects section). Remove the separate secret-message system and remove all Internet Identity gating from the owner panel.",
+  "architectural_notes": [
+    "Email collection is now allowed for the visitor message box and recruiter tracking, but the app must not send emails (storage/viewing only).",
+    "Store visitor messages, recruiter logs, editable site content, and projects in the Motoko backend canister (no external DB).",
+    "Unify owner access entry point: the corner name click opens the owner/admin panel (BirdOnTree3); remove the separate secret-message feature and its key-code credentials.",
+    "Owner/admin authentication must not use Internet Identity; use only the specified password gate.",
+    "Add owner-only backend endpoints (password-gated via BirdOnTree3) to clear/purge visitor message logs and recruiter visit logs; expose corresponding 'Clear logs' actions in the owner panel UI."
+  ],
+  "known_issues": [
+    "Build/rebuild attempts failed on the platform due to conflicting/stacked specs; requires a single clean consolidated specification (now provided in conversation).",
+    "Owner panel is still showing the platform Internet Identity login instead of the BirdOnTree3 password prompt (needs full removal of II code and cache-proof deployment).",
+    "Visitor message log is not displaying newly submitted messages after typing/submission (persistence/display bug)."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-modern-single-page-resume-website-for-hatem-alsakhboori-using-the-provided-resume-content-including-sections-for-hero-name-contact-links-education-experience-technical-skills-certifications-leadership-and-hobbies-interests-with-smooth-in-page-navigation-scroll-and-mobile-responsiveness",
+      "title": "Create a modern, single-page resume website for Hatem Alsakhboori using the provided resume content, including sections for Hero (name + contact links), Education, Experience, Technical Skills, Certifications & Leadership, and Hobbies & Interests, with smooth in-page navigation/scroll and mobile responsiveness.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-requested-visual-style-consistently-across-the-resume-website-minimalist-and-sophisticated-with-plenty-of-white-space-deep-navy-1e3a5f-as-the-primary-color-soft-gold-c9a962-as-the-accent-clean-whites-light-grays-and-elegant-typography-include-subtle-scroll-entrance-animations-that-do-not-hinder-readability",
+      "title": "Apply the requested visual style consistently across the resume website: minimalist and sophisticated with plenty of white space; deep navy (#1e3a5f) as the primary color, soft gold (#c9a962) as the accent, clean whites/light grays, and elegant typography; include subtle scroll/entrance animations that do not hinder readability.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-avoid-all-email-related-functionality-no-recruiter-gate-email-notifications-and-no-chat-to-email-the-site-must-not-attempt-to-send-emails-or-collect-emails-for-sending-purposes",
+      "title": "Remove/avoid all email-related functionality (no recruiter-gate email notifications and no chat-to-email). The site must not attempt to send emails or collect emails for sending purposes.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-owner-only-secret-message-box-at-the-end-of-the-website-that-is-accessed-via-a-small-clickable-text-link-showing-the-name-hatem-alsakhboori-in-the-corner-of-the-page-footer-corner-placement-clicking-the-name-must-open-a-password-prompt-only-after-entering-the-correct-password-should-the-secret-message-ui-be-revealed",
+      "title": "Add an owner-only secret message box at the end of the website that is accessed via a small clickable text link showing the name \"Hatem Alsakhboori\" in the corner of the page (footer/corner placement). Clicking the name must open a password prompt; only after entering the correct password should the secret message UI be revealed.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-secret-message-box-so-that-after-successful-password-entry-the-owner-can-create-and-view-secret-messages-and-the-messages-persist-across-page-reloads-by-storing-them-in-the-motoko-backend-canister-single-actor-provide-backend-methods-to-add-a-secret-message-and-list-secret-messages-the-frontend-should-call-these-methods-only-after-local-password-validation-succeeds",
+      "title": "Implement the secret message box so that, after successful password entry, the owner can create and view secret messages, and the messages persist across page reloads by storing them in the Motoko backend canister (single-actor). Provide backend methods to add a secret message and list secret messages; the frontend should call these methods only after local password validation succeeds.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-use-the-following-access-credentials-key-codes-for-the-secret-message-box-password-prompt-and-include-them-as-the-required-password-and-backup-codes-in-the-ui-copy-shown-to-the-owner-after-a-successful-login-display-once-per-session-password-hz-7391-ic-backup-codes-hz-bc-1842-hz-bc-5907-hz-bc-3301",
+      "title": "Use the following access credentials (\"key codes\") for the secret message box password prompt and include them as the required password and backup codes in the UI copy shown to the owner after a successful login (display once per session): Password = \"HZ-7391-IC\"; Backup codes = \"HZ-BC-1842\", \"HZ-BC-5907\", \"HZ-BC-3301\".",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-mandatory-recruiter-prompt-that-appears-on-page-load-before-any-resume-content-is-shown-the-prompt-must-ask-whether-the-visitor-is-a-recruiter-and-if-yes-collect-the-recruiter-s-company-name-save-each-prompt-submission-as-a-recruiter-visit-log-entry-in-the-motoko-backend-so-the-owner-can-view-it-later",
+      "title": "Implement a mandatory recruiter prompt that appears on page load before any resume content is shown. The prompt must ask whether the visitor is a recruiter and, if yes, collect the recruiter’s company name. Save each prompt submission as a recruiter visit log entry in the Motoko backend so the owner can view it later.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visitor-message-box-at-the-end-of-the-site-that-collects-visitor-name-email-and-message-and-persists-submissions-in-the-motoko-backend-for-owner-viewing-the-app-must-not-send-emails-and-must-not-include-any-email-sending-functionality-the-email-field-is-stored-only-as-part-of-the-submission-record-for-identification-viewing",
+      "title": "Add a visitor message box at the end of the site that collects visitor name, email, and message, and persists submissions in the Motoko backend for owner viewing. The app must not send emails and must not include any email-sending functionality; the email field is stored only as part of the submission record for identification/viewing.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-dedicated-owner-access-panel-separate-from-the-existing-corner-click-secret-message-feature-gated-by-the-owner-password-birdontree3-after-unlocking-the-panel-must-provide-options-to-1-view-visitor-message-submissions-and-2-view-recruiter-visit-logs",
+      "title": "Create a dedicated owner access panel (separate from the existing corner-click secret message feature) gated by the owner password \"BirdOnTree3\". After unlocking, the panel must provide options to: (1) view visitor message submissions, and (2) view recruiter visit logs.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-owner-editable-cms-capabilities-inside-the-owner-access-panel-password-birdontree3-to-edit-and-persist-the-resume-website-content-in-the-motoko-backend-editable-content-must-include-hero-text-education-entries-experience-items-skills-list-certifications-and-hobbies-interests",
+      "title": "Add owner-editable CMS capabilities inside the owner access panel (password \"BirdOnTree3\") to edit and persist the resume website content in the Motoko backend. Editable content must include: hero text, education entries, experience items, skills list, certifications, and hobbies/interests.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-projects-section-placed-after-the-certifications-leadership-section-render-multiple-project-cards-each-with-title-description-and-link-and-include-a-per-project-see-more-toggle-to-expand-collapse-additional-details-all-project-content-must-be-fully-editable-via-the-owner-access-panel-and-persisted-in-the-motoko-backend",
+      "title": "Add a Projects section placed after the Certifications & Leadership section. Render multiple project cards, each with title, description, and link, and include a per-project “See more” toggle to expand/collapse additional details. All project content must be fully editable via the owner access panel and persisted in the Motoko backend.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-all-internet-identity-ii-authentication-and-admin-check-gating-from-the-owner-access-panel-ui-so-that-it-never-shows-an-ii-login-screen-and-instead-always-starts-with-a-simple-password-prompt-for-the-owner-panel-password-birdontree3",
+      "title": "Remove all Internet Identity (II) authentication and admin-check gating from the Owner Access Panel UI so that it never shows an II login screen and instead always starts with a simple password prompt for the owner panel password \"BirdOnTree3\".",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-unify-owner-access-entry-so-the-small-corner-clickable-text-hatem-alsakhboori-is-the-single-entry-point-that-opens-the-owner-access-panel-modal-password-birdontree3-and-remove-disable-the-separate-secret-owner-secret-message-access-modal-from-the-public-site",
+      "title": "Unify owner-access entry so the small corner clickable text \"Hatem Alsakhboori\" is the single entry point that opens the Owner Access Panel modal (password: \"BirdOnTree3\"), and remove/disable the separate secret-owner/secret-message access modal from the public site.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-owner-access-panel-and-its-subviews-visitor-messages-recruiter-visits-content-editor-to-use-the-new-password-gated-backend-methods-and-ensure-data-fetching-works-after-unlocking-with-birdontree3",
+      "title": "Wire the Owner Access Panel and its subviews (Visitor Messages, Recruiter Visits, Content Editor) to use the new password-gated backend methods, and ensure data fetching works after unlocking with \"BirdOnTree3\".",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-visitor-message-logging-experience-so-that-when-a-visitor-submits-a-message-via-the-public-visitor-message-form-the-submission-persists-to-the-motoko-backend-and-becomes-visible-in-the-owner-message-log-learn-more-messages-without-requiring-a-page-reload-after-the-owner-opens-the-panel",
+      "title": "Fix the visitor message logging experience so that when a visitor submits a message via the public Visitor Message Form, the submission persists to the Motoko backend and becomes visible in the owner message log (\"learn more\" messages) without requiring a page reload after the owner opens the panel.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-clear-log-controls-in-the-owner-access-panel-for-both-visitor-messages-and-recruiter-visits-including-a-confirmation-step-and-refresh-the-ui-immediately-after-clearing",
+      "title": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create modern single-page resume website (hero, education, experience timeline, skills, certifications/leadership, hobbies) with minimalist navy (#1e3a5f) and gold (#c9a962) styling, smooth scroll/animations, and mobile responsiveness",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add mandatory on-page-load recruiter prompt (before any site content shows) to ask if visitor is a recruiter and collect company name; store recruiter visit logs for owner viewing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Add visitor message box at end of site to collect name, email, and message (\"learn more\" style); store submissions in Motoko backend and use email to identify repeat visitors/recruiters (no email sending)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Rebuild/fix owner access panel with password \"BirdOnTree3\"; provide two main options: view visitor messages and view recruiter visit logs",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add owner-editable CMS capabilities in owner panel to edit website content (hero, education, experience, skills, certifications, hobbies) and persist changes in Motoko backend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add new Projects section after Certifications with project cards (title/description/link) and a per-project \"See more\" toggle; fully editable via owner panel",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Make site more dynamic: add boxed section layout with hover light-up/highlight effects and scroll-based entrance animations across sections",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Extend the Motoko backend (single-actor) with persistent data models and methods required to support: recruiter visit logs, visitor message submissions, and owner-managed site content edits (see REQ-11/REQ-12). Ensure these endpoints are restricted to owner/admin access for read operations, and restricted appropriately for write operations (e.g., visitor submissions can be public; owner reads remain protected).",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Unify owner access entry: clicking the corner name should open the owner/admin panel (password: BirdOnTree3) and remove the separate secret-message login/system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Remove all Internet Identity authentication/gating from the owner access flow; owner panel must use only the password prompt",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Ensure visitor message submissions (\"learn more\" messages) are persisted and immediately visible in the owner message log after submission (fix message log not showing after typing/submitting)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Update the backend authorization model for owner-only reads/writes so that owner actions (view visitor messages, view recruiter visit logs, update site content) can be performed without Internet Identity by using the owner panel password \"BirdOnTree3\" as the gate.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add owner-panel controls to clear/delete visitor message logs and recruiter/visitor visit logs (owner-only action via BirdOnTree3), including backend methods to purge these records",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Resume single-page site with unified owner access via corner name (BirdOnTree3)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

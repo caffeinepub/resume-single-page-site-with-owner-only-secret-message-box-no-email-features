@@ -1,0 +1,27 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-clear-log-controls-in-the-owner-access-panel-for-both-visitor-messages-and-recruiter-visits-including-a-confirmation-step-and-refresh-the-ui-immediately-after-clearing",
+      "featureTitle": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+      "files": [
+        "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+        "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+        "frontend/src/hooks/useRecruiterVisit.ts",
+        "frontend/src/hooks/useVisitorMessages.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-19"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

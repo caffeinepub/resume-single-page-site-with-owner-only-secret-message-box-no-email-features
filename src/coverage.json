@@ -1,0 +1,58 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-05T22:34:46.914Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-18",
+        "summary": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-19",
+        "summary": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useVisitorMessages.ts",
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useVisitorMessages.ts",
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+    "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useRecruiterVisit.ts",
+    "frontend/src/hooks/useVisitorMessages.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

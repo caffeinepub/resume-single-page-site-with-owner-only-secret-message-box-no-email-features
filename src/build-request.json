@@ -1,0 +1,71 @@
+{
+  "kind": "build_request",
+  "title": "Add owner-only controls to clear Visitor Messages and Recruiter Visit logs",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-18",
+      "text": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "can you help me and make the logs for messages and visitor logs clearable? I want to be able to clear them."
+        ]
+      },
+      "acceptanceCriteria": [
+        "backend/main.mo exposes an owner-password-gated method to clear all visitor messages (requires the same owner panel password check used by getVisitorMessages).",
+        "backend/main.mo exposes an owner-password-gated method to clear all recruiter visit logs (requires the same owner panel password check used by getRecruiterVisits).",
+        "After calling each clear method, subsequent calls to getVisitorMessages(password) or getRecruiterVisits(password) return an empty array."
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "make the logs for messages and visitor logs clearable"
+        ]
+      },
+      "acceptanceCriteria": [
+        "VisitorMessagesView shows a \"Clear all messages\" button when the owner is viewing the Visitor Messages log.",
+        "RecruiterVisitsView shows a \"Clear all visits\" button when the owner is viewing the Recruiter Visits log.",
+        "Clicking a clear button prompts for confirmation (e.g., modal/dialog) with English text warning that the action cannot be undone and offering Cancel/Confirm actions.",
+        "On confirm, the frontend calls the corresponding password-protected backend clear method using the already-unlocked owner password.",
+        "After a successful clear, the relevant React Query cache is invalidated/refetched so the list becomes empty without a page reload.",
+        "If the backend returns an authorization error (wrong/expired password), the UI shows an error state consistent with the existing authorization error handling in these views."
+      ]
+    }
+  ],
+  "constraints": [
+    "Keep all Motoko logic in the single actor in backend/main.mo; do not introduce additional backend services.",
+    "Do not edit frontend files under frontend/src/components/ui or other frontend immutablePaths listed in SYSTEM_CONTEXT.",
+    "Use English for any user-facing text.",
+    "Clearing logs must remain owner-only and require the owner panel password (BirdOnTree3) via the existing password-check mechanism."
+  ],
+  "nonGoals": [
+    "Do not add per-item delete for individual messages/visits (only clear-all is required).",
+    "Do not add Internet Identity authentication or any third-party auth.",
+    "Do not add any email sending functionality."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

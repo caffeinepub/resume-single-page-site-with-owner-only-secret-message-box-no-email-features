@@ -1,2 +1,3 @@
-# resume-single-page-site-with-owner-only-secret-message-box-no-email-features
-Exported from Caffeine project: Resume single-page site with unified owner access via corner name (BirdOnTree3)
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`
