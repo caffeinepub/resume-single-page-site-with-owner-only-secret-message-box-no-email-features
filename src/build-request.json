@@ -1,58 +1,72 @@
 {
   "kind": "build_request",
-  "title": "Add owner-only controls to clear Visitor Messages and Recruiter Visit logs",
-  "priority": "normal",
+  "title": "Fix owner panel authorization so contact info edits can be saved without admin access errors",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-18",
-      "text": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs.",
+      "id": "REQ-29",
+      "text": "Fix the Owner Panel “Edit Website Content” save flow so editing Contact Information (address/location, phone number, email) does not fail with an authorization error after the owner has successfully unlocked the Owner Access Panel with password \"BirdOnTree3\".",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Whenever I try to change the contact info and the adress and the email it says it requires an admistrator access. Although I am in the adminstrator panel. fix that please"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After unlocking the Owner Access Panel with the correct password, updating Contact Information fields in the Content Editor and clicking “Save Changes” succeeds with no “requires administrator access” / unauthorized error.",
+        "The updated contact fields persist in the Motoko canister and remain updated after a page refresh.",
+        "The public hero contact block reflects the updated contact fields after saving (following the app’s existing React Query refresh/invalidation behavior)."
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "text": "Update the backend to support password-gated owner write operations (at minimum: updating Content used by the site) so that the Owner Panel can update content without relying on Internet Identity admin permissions. The password to authorize these owner operations must be \"BirdOnTree3\".",
       "target": "backend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "can you help me and make the logs for messages and visitor logs clearable? I want to be able to clear them."
+          "it says it requires an admistrator access. Although I am in the adminstrator panel"
         ]
       },
       "acceptanceCriteria": [
-        "backend/main.mo exposes an owner-password-gated method to clear all visitor messages (requires the same owner panel password check used by getVisitorMessages).",
-        "backend/main.mo exposes an owner-password-gated method to clear all recruiter visit logs (requires the same owner panel password check used by getRecruiterVisits).",
-        "After calling each clear method, subsequent calls to getVisitorMessages(password) or getRecruiterVisits(password) return an empty array."
+        "The backend exposes an owner-password-gated method for updating site content (including contact details) that succeeds when the correct password \"BirdOnTree3\" is provided and traps/returns an error when it is not.",
+        "The existing public read method(s) (e.g., getContent) remain publicly accessible and unchanged in behavior.",
+        "Saving content from the Owner Panel no longer depends on AccessControl admin permissions tied to the caller principal."
       ]
     },
     {
-      "id": "REQ-19",
-      "text": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+      "id": "REQ-31",
+      "text": "Wire the frontend Content Editor save logic to call the password-gated backend update method using the already-available unlocked password stored in the OwnerAccessPanel (passed into ContentEditor as the ownerPassword prop).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "make the logs for messages and visitor logs clearable"
+          "Although I am in the adminstrator panel. fix that please"
         ]
       },
       "acceptanceCriteria": [
-        "VisitorMessagesView shows a \"Clear all messages\" button when the owner is viewing the Visitor Messages log.",
-        "RecruiterVisitsView shows a \"Clear all visits\" button when the owner is viewing the Recruiter Visits log.",
-        "Clicking a clear button prompts for confirmation (e.g., modal/dialog) with English text warning that the action cannot be undone and offering Cancel/Confirm actions.",
-        "On confirm, the frontend calls the corresponding password-protected backend clear method using the already-unlocked owner password.",
-        "After a successful clear, the relevant React Query cache is invalidated/refetched so the list becomes empty without a page reload.",
-        "If the backend returns an authorization error (wrong/expired password), the UI shows an error state consistent with the existing authorization error handling in these views."
+        "When the OwnerAccessPanel is unlocked and navigates to the Content Editor, clicking “Save Changes” uses the unlocked password when calling the backend.",
+        "If the Content Editor is rendered without an ownerPassword for any reason, the UI prevents saving and shows a clear English error message indicating owner access is required.",
+        "The previous authorization error message about requiring administrator access is no longer shown during normal owner-panel saves with the correct password."
       ]
     }
   ],
   "constraints": [
-    "Keep all Motoko logic in the single actor in backend/main.mo; do not introduce additional backend services.",
-    "Do not edit frontend files under frontend/src/components/ui or other frontend immutablePaths listed in SYSTEM_CONTEXT.",
-    "Use English for any user-facing text.",
-    "Clearing logs must remain owner-only and require the owner panel password (BirdOnTree3) via the existing password-check mechanism."
+    "Respect the Internet Computer single-actor backend architecture: all Motoko logic must remain in backend/main.mo.",
+    "Do not edit files under frontend/src/components/ui or other frontend immutablePaths listed in SYSTEM_CONTEXT.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Do not add per-item delete for individual messages/visits (only clear-all is required).",
-    "Do not add Internet Identity authentication or any third-party auth.",
-    "Do not add any email sending functionality."
+    "Re-introducing Internet Identity gating for the Owner Access Panel.",
+    "Adding any email-sending functionality.",
+    "Changing the public recruiter prompt behavior or visitor message submission behavior beyond what is necessary to fix the owner content save authorization issue."
   ],
   "imageRequirements": {
     "required": [],

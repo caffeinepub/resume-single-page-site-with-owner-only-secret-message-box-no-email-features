@@ -19,7 +19,7 @@ interface VisitorMessagesViewProps {
 }
 
 export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMessagesViewProps) {
-  const { data: messages, isLoading, error } = useGetVisitorMessages(ownerPassword);
+  const { data: messages, isLoading, error } = useGetVisitorMessages();
   const clearMutation = useClearVisitorMessages();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -41,7 +41,7 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
 
   const handleClearAll = async () => {
     try {
-      await clearMutation.mutateAsync(ownerPassword);
+      await clearMutation.mutateAsync();
       setShowConfirmDialog(false);
     } catch (err) {
       console.error('Failed to clear messages:', err);
@@ -87,7 +87,7 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
           <p className="text-red-800 font-medium mb-2">Authorization Error</p>
           <p className="text-red-600 text-sm">
-            {error instanceof Error ? error.message : 'Failed to load messages. Please check your password.'}
+            {error instanceof Error ? error.message : 'Failed to load messages. Please check your authorization.'}
           </p>
         </div>
       ) : isLoading ? (

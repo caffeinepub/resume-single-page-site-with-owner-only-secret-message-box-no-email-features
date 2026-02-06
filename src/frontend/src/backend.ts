@@ -96,12 +96,12 @@ export interface Certification {
 }
 export type Time = bigint;
 export interface Content {
+    contact: ContactDetails;
     projects: Array<Project>;
     education: Array<EducationEntry>;
     heroText: string;
     experience: Array<ExperienceItem>;
     certifications: Array<Certification>;
-    skills: Array<string>;
     hobbies: Array<string>;
 }
 export interface RecruiterVisit {
@@ -113,6 +113,11 @@ export interface VisitorMessage {
     email: string;
     message: string;
     timestamp: Time;
+}
+export interface ContactDetails {
+    email: string;
+    address: string;
+    phone: string;
 }
 export interface ExperienceItem {
     duration: string;
@@ -141,17 +146,21 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    addSkill(skill: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    clearRecruiterVisits(password: string): Promise<void>;
-    clearVisitorMessages(password: string): Promise<void>;
+    clearRecruiterVisits(): Promise<void>;
+    clearSkills(): Promise<void>;
+    clearVisitorMessages(): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getContent(): Promise<Content>;
-    getRecruiterVisits(password: string): Promise<Array<RecruiterVisit>>;
+    getRecruiterVisits(): Promise<Array<RecruiterVisit>>;
+    getSkills(): Promise<Array<string>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getVisitorMessages(password: string): Promise<Array<VisitorMessage>>;
+    getVisitorMessages(): Promise<Array<VisitorMessage>>;
     isCallerAdmin(): Promise<boolean>;
     logRecruiterVisit(isRecruiter: boolean, companyName: string | null): Promise<void>;
+    removeSkill(skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
     updateContent(newContent: Content, password: string): Promise<void>;
@@ -173,6 +182,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addSkill(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addSkill(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addSkill(arg0);
+            return result;
+        }
+    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
@@ -187,31 +210,45 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async clearRecruiterVisits(arg0: string): Promise<void> {
+    async clearRecruiterVisits(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.clearRecruiterVisits(arg0);
+                const result = await this.actor.clearRecruiterVisits();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.clearRecruiterVisits(arg0);
+            const result = await this.actor.clearRecruiterVisits();
             return result;
         }
     }
-    async clearVisitorMessages(arg0: string): Promise<void> {
+    async clearSkills(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.clearVisitorMessages(arg0);
+                const result = await this.actor.clearSkills();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.clearVisitorMessages(arg0);
+            const result = await this.actor.clearSkills();
+            return result;
+        }
+    }
+    async clearVisitorMessages(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.clearVisitorMessages();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.clearVisitorMessages();
             return result;
         }
     }
@@ -257,18 +294,32 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getRecruiterVisits(arg0: string): Promise<Array<RecruiterVisit>> {
+    async getRecruiterVisits(): Promise<Array<RecruiterVisit>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getRecruiterVisits(arg0);
+                const result = await this.actor.getRecruiterVisits();
                 return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getRecruiterVisits(arg0);
+            const result = await this.actor.getRecruiterVisits();
             return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getSkills(): Promise<Array<string>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSkills();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSkills();
+            return result;
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
@@ -285,17 +336,17 @@ export class Backend implements backendInterface {
             return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getVisitorMessages(arg0: string): Promise<Array<VisitorMessage>> {
+    async getVisitorMessages(): Promise<Array<VisitorMessage>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getVisitorMessages(arg0);
+                const result = await this.actor.getVisitorMessages();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVisitorMessages(arg0);
+            const result = await this.actor.getVisitorMessages();
             return result;
         }
     }
@@ -324,6 +375,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.logRecruiterVisit(arg0, to_candid_opt_n10(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async removeSkill(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeSkill(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeSkill(arg0);
             return result;
         }
     }

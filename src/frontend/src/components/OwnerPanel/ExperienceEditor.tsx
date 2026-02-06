@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import type { Content, Project } from '../../backend';
+import type { ExperienceItem } from '../../backend';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,102 +12,116 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-interface ProjectsEditorProps {
-  content: Content;
-  onUpdate: (content: Content) => void;
+interface ExperienceEditorProps {
+  experience: ExperienceItem[];
+  onUpdate: (experience: ExperienceItem[]) => void;
 }
 
-export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProps) {
-  const [expandedProject, setExpandedProject] = useState<number | null>(null);
+export default function ExperienceEditor({ experience, onUpdate }: ExperienceEditorProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-  const addProject = () => {
-    const newProject: Project = {
-      title: 'New Project',
-      description: 'Project description',
-      link: '',
-      details: '',
+  const addExperience = () => {
+    const newItem: ExperienceItem = {
+      company: 'Company Name',
+      position: 'Position Title',
+      duration: 'Jan 2024 - Present',
+      description: 'Job description',
     };
-    onUpdate({
-      ...content,
-      projects: [...content.projects, newProject],
-    });
-    setExpandedProject(content.projects.length);
+    onUpdate([...experience, newItem]);
+    setExpandedIndex(experience.length);
   };
 
   const confirmDelete = () => {
     if (deleteIndex !== null) {
-      onUpdate({
-        ...content,
-        projects: content.projects.filter((_, i) => i !== deleteIndex),
-      });
-      if (expandedProject === deleteIndex) {
-        setExpandedProject(null);
+      onUpdate(experience.filter((_, i) => i !== deleteIndex));
+      if (expandedIndex === deleteIndex) {
+        setExpandedIndex(null);
       }
       setDeleteIndex(null);
     }
   };
 
-  const updateProject = (index: number, field: keyof Project, value: string) => {
-    const updatedProjects = [...content.projects];
-    updatedProjects[index] = {
-      ...updatedProjects[index],
+  const updateExperience = (index: number, field: keyof ExperienceItem, value: string) => {
+    const updated = [...experience];
+    updated[index] = {
+      ...updated[index],
       [field]: value,
     };
-    onUpdate({
-      ...content,
-      projects: updatedProjects,
-    });
+    onUpdate(updated);
   };
 
   return (
     <div className="border-t border-gray-200 pt-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-bold text-navy">Projects</h4>
+        <h4 className="text-lg font-bold text-navy">Experience</h4>
         <button
-          onClick={addProject}
+          onClick={addExperience}
           className="flex items-center gap-2 text-sm bg-navy text-white px-3 py-2 rounded-lg hover:bg-navy/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Project
+          Add Experience
         </button>
       </div>
 
       <div className="space-y-4">
-        {content.projects.map((project, index) => (
+        {experience.map((item, index) => (
           <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <button
-                onClick={() => setExpandedProject(expandedProject === index ? null : index)}
+                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
                 className="flex items-center gap-2 text-navy hover:text-navy/80 transition-colors font-medium"
               >
-                {expandedProject === index ? (
+                {expandedIndex === index ? (
                   <ChevronUp className="w-4 h-4" />
                 ) : (
                   <ChevronDown className="w-4 h-4" />
                 )}
-                {project.title}
+                {item.position} at {item.company}
               </button>
               <button
                 onClick={() => setDeleteIndex(index)}
                 className="text-red-600 hover:text-red-700 transition-colors"
-                title="Delete project"
+                title="Delete experience entry"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
 
-            {expandedProject === index && (
+            {expandedIndex === index && (
               <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
+                    Company
                   </label>
                   <input
                     type="text"
-                    value={project.title}
-                    onChange={(e) => updateProject(index, 'title', e.target.value)}
+                    value={item.company}
+                    onChange={(e) => updateExperience(index, 'company', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Position
+                  </label>
+                  <input
+                    type="text"
+                    value={item.position}
+                    onChange={(e) => updateExperience(index, 'position', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration
+                  </label>
+                  <input
+                    type="text"
+                    value={item.duration}
+                    onChange={(e) => updateExperience(index, 'duration', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
+                    placeholder="e.g., Jan 2024 - Present"
                   />
                 </div>
                 <div>
@@ -115,31 +129,8 @@ export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProp
                     Description
                   </label>
                   <textarea
-                    value={project.description}
-                    onChange={(e) => updateProject(index, 'description', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Link
-                  </label>
-                  <input
-                    type="url"
-                    value={project.link}
-                    onChange={(e) => updateProject(index, 'link', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Details (shown when expanded)
-                  </label>
-                  <textarea
-                    value={project.details}
-                    onChange={(e) => updateProject(index, 'details', e.target.value)}
+                    value={item.description}
+                    onChange={(e) => updateExperience(index, 'description', e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm resize-none"
                   />
@@ -149,9 +140,9 @@ export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProp
           </div>
         ))}
 
-        {content.projects.length === 0 && (
+        {experience.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            No projects yet. Click "Add Project" to create one.
+            No experience entries yet. Click "Add Experience" to create one.
           </div>
         )}
       </div>
@@ -159,9 +150,9 @@ export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProp
       <AlertDialog open={deleteIndex !== null} onOpenChange={(open) => !open && setDeleteIndex(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogTitle>Delete Experience Entry</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deleteIndex !== null ? content.projects[deleteIndex].title : ''}"? This action cannot be undone.
+              Are you sure you want to delete "{deleteIndex !== null ? `${experience[deleteIndex].position} at ${experience[deleteIndex].company}` : ''}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

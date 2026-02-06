@@ -1,27 +1,42 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T22:34:46.911Z",
-  "summary": "Frontend adds clear-all controls (with destructive buttons, confirmation-dialog imports/state, and React Query mutations that call new backend methods and invalidate caches) for both Visitor Messages and Recruiter Visits. Backend changes are truncated; password constant is present, but the diff snippet does not show the required clear/purge methods, so backend fulfillment cannot be fully verified from provided evidence.",
+  "generatedAt": "2026-02-06T23:26:47.109Z",
+  "summary": "Diff partially addresses the owner-content save authorization by wiring the frontend ContentEditor/useUpdateContent hook to call a password-bearing updateContent method. However, the backend diff excerpt does not provide evidence that a password-gated updateContent method is implemented (or that admin/principal-based authorization is removed for owner saves), and the frontend does not appear to handle the “missing ownerPassword” case as required.",
   "missing_requirements": [
     {
-      "id": "REQ-18",
-      "requirement": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs (using the same owner password-check mechanism as existing getVisitorMessages/getRecruiterVisits), such that subsequent reads return empty arrays.",
-      "reason": "The backend diff is truncated before the owner-only methods area; the summary does not show implementations of clearVisitorMessages(password) / clearRecruiterVisits(password) nor the logic that purges the underlying List state and enforces the existing password check.",
+      "id": "REQ-30",
+      "requirement": "Backend exposes an owner-password-gated method for updating site content (including contact details) using password \"BirdOnTree3\", and owner-panel saving no longer depends on AccessControl admin permissions tied to caller principal, while public reads remain unchanged.",
+      "reason": "The backend file shows an ownerPassword constant, but the diff summary excerpt is truncated before any password-gated update method is shown; there is no visible implementation/evidence of an updateContent(content, password) method or its authorization logic, nor evidence that admin/principal-based checks were removed for owner content updates.",
       "evidence": [
-        "backend/main.mo (truncated; owner-only methods section cut off)"
+        "backend/main.mo (truncated; shows `let ownerPassword = \"BirdOnTree3\";` and `getContent()` but no shown update method)"
+      ]
+    },
+    {
+      "id": "REQ-31",
+      "requirement": "If Content Editor is rendered without an ownerPassword, the UI prevents saving and shows a clear English error indicating owner access is required.",
+      "reason": "ContentEditor currently types `ownerPassword` as a required `string` and unconditionally uses it in the save mutation; the shown code does not include a guard that blocks saving when password is missing/empty, nor a specific error message for that scenario.",
+      "evidence": [
+        "frontend/src/components/OwnerPanel/ContentEditor.tsx (props: `ownerPassword: string`; handleSave calls `mutateAsync({ content: updatedContent, password: ownerPassword })` without presence check)"
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "requirement": "After unlocking with password \"BirdOnTree3\", saving Contact Information edits succeeds without admin/unauthorized errors, persists after refresh, and the public hero contact block reflects updated fields.",
+      "reason": "Frontend wiring suggests content save now includes a password, but the diff provides no evidence that the backend accepts and persists contact updates via a password-gated method, nor that the previous admin authorization failure is eliminated end-to-end. Persistence and public hero contact reflection cannot be confirmed from the truncated backend diff.",
+      "evidence": [
+        "backend/main.mo (truncated; persistence/update method not shown)",
+        "frontend/src/hooks/useContent.ts (calls `actor.updateContent(content, password)` but backend method not evidenced)"
       ]
     }
   ],
   "hallucinated_features": [],
-  "confidence": 0.55,
+  "confidence": 0.62,
   "changed_files": [
     "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
-    "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
-    "frontend/src/hooks/useRecruiterVisit.ts",
-    "frontend/src/hooks/useVisitorMessages.ts",
+    "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+    "frontend/src/hooks/useContent.ts",
     "project_state.json"
   ]
 }

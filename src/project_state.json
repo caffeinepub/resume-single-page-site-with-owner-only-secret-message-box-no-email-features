@@ -1,20 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 17,
   "summary": "Build a modern single-page resume website for Hatem Alsakhboori with minimalist navy/gold design, smooth navigation, dynamic hover/scroll animations, a page-load recruiter prompt with recruiter visit logging, a visitor message box collecting name/email/message stored in the Motoko backend (no email sending), and a single unified owner access panel entered via clicking the corner name (password: BirdOnTree3) to view visitor message logs (“learn more” messages) and recruiter logs and edit site content (including an editable Projects section). Remove the separate secret-message system and remove all Internet Identity gating from the owner panel.",
   "architectural_notes": [
     "Email collection is now allowed for the visitor message box and recruiter tracking, but the app must not send emails (storage/viewing only).",
     "Store visitor messages, recruiter logs, editable site content, and projects in the Motoko backend canister (no external DB).",
     "Unify owner access entry point: the corner name click opens the owner/admin panel (BirdOnTree3); remove the separate secret-message feature and its key-code credentials.",
     "Owner/admin authentication must not use Internet Identity; use only the specified password gate.",
-    "Add owner-only backend endpoints (password-gated via BirdOnTree3) to clear/purge visitor message logs and recruiter visit logs; expose corresponding 'Clear logs' actions in the owner panel UI."
+    "Add owner-only backend endpoints (password-gated via BirdOnTree3) to clear/purge visitor message logs and recruiter visit logs; expose corresponding 'Clear logs' actions in the owner panel UI.",
+    "Owner CMS must support full CRUD on list-based sections (Education, Experience, Hobbies, etc.), including delete operations persisted in the Motoko backend.",
+    "Expose contact fields (address, phone, email) as part of the owner-editable site content model stored in the Motoko backend (no email sending)."
   ],
   "known_issues": [
     "Build/rebuild attempts failed on the platform due to conflicting/stacked specs; requires a single clean consolidated specification (now provided in conversation).",
     "Owner panel is still showing the platform Internet Identity login instead of the BirdOnTree3 password prompt (needs full removal of II code and cache-proof deployment).",
-    "Visitor message log is not displaying newly submitted messages after typing/submission (persistence/display bug)."
+    "Visitor message log is not displaying newly submitted messages after typing/submission (persistence/display bug).",
+    "Contact info editing (address/email) in the owner/admin panel fails with an \"requires administrator access\" error even after unlocking the panel; owner authorization gating is misapplied/broken for contact update endpoint/UI."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-modern-single-page-resume-website-for-hatem-alsakhboori-using-the-provided-resume-content-including-sections-for-hero-name-contact-links-education-experience-technical-skills-certifications-leadership-and-hobbies-interests-with-smooth-in-page-navigation-scroll-and-mobile-responsiveness",
@@ -143,6 +146,78 @@
         "REQ-19"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-extend-the-owner-access-panel-content-editor-ui-to-support-deleting-existing-items-not-just-adding-editing-for-the-editable-resume-content-lists-specifically-hobbies-interests-items-education-entries-and-experience-items",
+      "title": "Extend the Owner Access Panel \"Content Editor\" UI to support deleting existing items (not just adding/editing) for the editable resume content lists, specifically: Hobbies & Interests items, Education entries, and Experience items.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-confirmation-step-for-delete-actions-in-the-content-editor-to-prevent-accidental-removal-for-hobbies-education-entries-and-experience-items",
+      "title": "Add a confirmation step for delete actions in the Content Editor to prevent accidental removal (for hobbies, education entries, and experience items).",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-deletions-made-in-the-content-editor-persist-by-saving-updated-content-through-the-existing-password-gated-content-update-flow-and-ensure-the-public-resume-sections-reflect-deletions-after-saving-without-requiring-a-full-page-reload",
+      "title": "Ensure deletions made in the Content Editor persist by saving updated content through the existing password-gated content update flow, and ensure the public resume sections reflect deletions after saving without requiring a full page reload.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-owner-access-panel-content-editor-so-the-owner-can-delete-existing-items-for-all-editable-list-based-resume-content-including-at-minimum-skills-items-and-certifications-entries-in-addition-to-the-already-supported-deletes-for-hobbies-education-experience-and-projects",
+      "title": "Extend the Owner Access Panel Content Editor so the owner can delete existing items for all editable list-based resume content, including at minimum: Skills items and Certifications entries (in addition to the already-supported deletes for Hobbies, Education, Experience, and Projects).",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-skills-section-fully-editable-from-the-owner-access-panel-by-providing-a-structured-editing-experience-add-edit-delete-skills-and-ensure-the-public-skills-section-renders-from-the-persisted-backend-content-so-edits-are-visible-on-the-main-resume-page",
+      "title": "Make the Skills section fully editable from the Owner Access Panel by providing a structured editing experience (add/edit/delete skills) and ensure the public Skills section renders from the persisted backend content so edits are visible on the main resume page.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-public-hero-contact-display-to-render-address-location-phone-and-email-from-backend-content-when-available-with-a-fallback-to-the-existing-static-resumecontent-values-when-backend-content-is-not-yet-present",
+      "title": "Update the public hero contact display to render address/location, phone, and email from backend content when available, with a fallback to the existing static resumeContent values when backend content is not yet present.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-contact-editing-controls-to-the-owner-access-panel-content-editor-so-the-owner-can-update-address-location-phone-number-and-email-and-persist-the-changes-via-the-existing-password-gated-content-update-flow-birdontree3",
+      "title": "Add contact editing controls to the Owner Access Panel Content Editor so the owner can update address/location, phone number, and email, and persist the changes via the existing password-gated content update flow (BirdOnTree3).",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-owner-panel-edit-website-content-save-flow-so-editing-contact-information-address-location-phone-number-email-does-not-fail-with-an-authorization-error-after-the-owner-has-successfully-unlocked-the-owner-access-panel-with-password-birdontree3",
+      "title": "Fix the Owner Panel “Edit Website Content” save flow so editing Contact Information (address/location, phone number, email) does not fail with an authorization error after the owner has successfully unlocked the Owner Access Panel with password \"BirdOnTree3\".",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-frontend-content-editor-save-logic-to-call-the-password-gated-backend-update-method-using-the-already-available-unlocked-password-stored-in-the-owneraccesspanel-passed-into-contenteditor-as-the-ownerpassword-prop",
+      "title": "Wire the frontend Content Editor save logic to call the password-gated backend update method using the already-available unlocked password stored in the OwnerAccessPanel (passed into ContentEditor as the ownerPassword prop).",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -233,6 +308,42 @@
       "summary": "Add password-protected backend methods to clear (purge) stored Visitor Messages and Recruiter Visit logs.",
       "reqIds": [
         "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add delete/removal capabilities in the owner CMS editor for existing items (e.g., hobbies, education entries, experience items), not just adding new ones; persist deletions in the Motoko backend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Make Contact information editable via the owner/CMS panel (address, phone number, and email) and persist changes in the Motoko backend so the public site updates accordingly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Extend the backend resume content model to include customizable contact fields for the public hero section: address/location text, phone number, and email address, persisted in the Motoko canister and returned by the public getContent() endpoint.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Update the backend upgrade/migration logic (per the project’s conditional migration policy) so existing deployed state is safely upgraded to the new Content schema by initializing the new contact fields with the current default values from the site.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Update the backend to support password-gated owner write operations (at minimum: updating Content used by the site) so that the Owner Panel can update content without relying on Internet Identity admin permissions. The password to authorize these owner operations must be \"BirdOnTree3\".",
+      "reqIds": [
+        "REQ-30"
       ],
       "status": "pending"
     }

@@ -2,13 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-clear-log-controls-in-the-owner-access-panel-for-both-visitor-messages-and-recruiter-visits-including-a-confirmation-step-and-refresh-the-ui-immediately-after-clearing",
-      "featureTitle": "Add clear-log controls in the Owner Access Panel for both Visitor Messages and Recruiter Visits, including a confirmation step, and refresh the UI immediately after clearing.",
+      "featureId": "feature-fix-the-owner-panel-edit-website-content-save-flow-so-editing-contact-information-address-location-phone-number-email-does-not-fail-with-an-authorization-error-after-the-owner-has-successfully-unlocked-the-owner-access-panel-with-password-birdontree3",
+      "featureTitle": "Fix the Owner Panel “Edit Website Content” save flow so editing Contact Information (address/location, phone number, email) does not fail with an authorization error after the owner has successfully unlocked the Owner Access Panel with password \"BirdOnTree3\".",
       "files": [
-        "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
-        "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
-        "frontend/src/hooks/useRecruiterVisit.ts",
-        "frontend/src/hooks/useVisitorMessages.ts"
+        "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+        "frontend/src/hooks/useContent.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -19,7 +17,27 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-19"
+        "REQ-29"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-wire-the-frontend-content-editor-save-logic-to-call-the-password-gated-backend-update-method-using-the-already-available-unlocked-password-stored-in-the-owneraccesspanel-passed-into-contenteditor-as-the-ownerpassword-prop",
+      "featureTitle": "Wire the frontend Content Editor save logic to call the password-gated backend update method using the already-available unlocked password stored in the OwnerAccessPanel (passed into ContentEditor as the ownerPassword prop).",
+      "files": [
+        "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+        "frontend/src/hooks/useContent.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-31"
       ],
       "confidence": "high"
     }

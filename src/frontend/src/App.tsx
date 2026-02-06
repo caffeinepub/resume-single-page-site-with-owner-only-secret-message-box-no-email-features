@@ -6,6 +6,7 @@ import VisitorMessageForm from './components/VisitorMessageForm';
 import ProjectsSection from './components/ProjectsSection';
 import OwnerAccessPanel from './components/OwnerPanel/OwnerAccessPanel';
 import { useGetContent } from './hooks/useContent';
+import { useGetSkills } from './hooks/useQueries';
 import { resumeContent } from './resumeContent';
 import { Mail, MapPin, Phone, Linkedin } from 'lucide-react';
 
@@ -13,17 +14,30 @@ export default function App() {
   const [recruiterPromptCompleted, setRecruiterPromptCompleted] = useState(false);
   const [showOwnerPanel, setShowOwnerPanel] = useState(false);
   const { data: content, isLoading: contentLoading } = useGetContent();
+  const { data: skills, isLoading: skillsLoading } = useGetSkills();
 
   // Use backend content if available, fallback to static content
   const displayContent = content || {
     heroText: resumeContent.hero.tagline,
     education: [],
     experience: [],
-    skills: [],
     certifications: [],
     hobbies: [],
     projects: [],
+    contact: {
+      address: resumeContent.hero.location,
+      phone: resumeContent.hero.phone,
+      email: resumeContent.hero.email,
+    },
   };
+
+  // Use backend skills if available
+  const displaySkills = skills || [];
+
+  // Contact details with fallback
+  const contactPhone = content?.contact?.phone || resumeContent.hero.phone;
+  const contactAddress = content?.contact?.address || resumeContent.hero.location;
+  const contactEmail = content?.contact?.email || resumeContent.hero.email;
 
   // Don't show main content until recruiter prompt is completed
   if (!recruiterPromptCompleted) {
@@ -46,17 +60,17 @@ export default function App() {
             </p>
             
             <div className="flex flex-wrap justify-center gap-6 text-gray-700">
-              <a href={`tel:${resumeContent.hero.phone}`} className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href={`tel:${contactPhone}`} className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Phone className="w-5 h-5" />
-                <span>{resumeContent.hero.phone}</span>
+                <span>{contactPhone}</span>
               </a>
               <span className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
-                <span>{resumeContent.hero.location}</span>
+                <span>{contactAddress}</span>
               </span>
-              <a href={`mailto:${resumeContent.hero.email}`} className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Mail className="w-5 h-5" />
-                <span>{resumeContent.hero.email}</span>
+                <span>{contactEmail}</span>
               </a>
               <a 
                 href={resumeContent.hero.linkedin} 
@@ -167,9 +181,9 @@ export default function App() {
         <Section id="skills" title="Technical Skills">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:border-gold/30 transition-all">
-              {displayContent.skills.length > 0 ? (
+              {displaySkills.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {displayContent.skills.map((skill, idx) => (
+                  {displaySkills.map((skill, idx) => (
                     <span 
                       key={idx}
                       className="px-4 py-2 bg-navy/5 text-navy rounded-lg border border-navy/10 hover:bg-navy/10 transition-colors"
@@ -205,12 +219,12 @@ export default function App() {
         <Section id="certifications" title="Certifications & Leadership">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:border-gold/30 transition-all">
-              {displayContent.certifications.length > 0 ? (
+              {content && content.certifications.length > 0 ? (
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-bold text-navy mb-3">Certifications</h3>
                     <div className="flex flex-wrap gap-2">
-                      {displayContent.certifications.map((cert, idx) => (
+                      {content.certifications.map((cert, idx) => (
                         <span 
                           key={idx}
                           className="px-4 py-2 bg-gold/10 text-gold rounded-lg border border-gold/20 font-medium"

@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Allow the site owner to securely clear (purge) all stored Visitor Messages and Recruiter Visit logs from the Owner Access Panel.
+**Goal:** Allow the Owner Panel to successfully save Contact Information updates after unlocking with the owner password, without triggering administrator/unauthorized access errors.
 
 **Planned changes:**
-- Add owner-password-gated backend methods in `backend/main.mo` to clear all visitor messages and clear all recruiter visit logs, using the same password-check mechanism as the existing owner-only fetch methods.
-- Update the Owner Access Panel views to include “Clear all messages” and “Clear all visits” actions with an English confirmation dialog (Cancel/Confirm) warning the action cannot be undone.
-- After a successful clear, refresh the corresponding list immediately by invalidating/refetching cached data; show existing-style authorization errors if the password is wrong/expired.
+- Update the Motoko backend to add a password-gated owner write method for updating site content (including contact details) using password "BirdOnTree3", independent of caller principal admin permissions.
+- Keep existing public read content methods (e.g., getContent) publicly accessible and unchanged in behavior.
+- Wire the frontend Content Editor save flow to call the new password-gated backend update method using the unlocked password already passed from OwnerAccessPanel (ownerPassword prop).
+- Add a clear English UI guard/error when Content Editor is used without an ownerPassword, preventing saves in that case.
+- Ensure the frontend refresh/invalidation behavior updates the public hero contact block after a successful save.
 
-**User-visible outcome:** In the Owner Access Panel, the owner can clear all Visitor Messages or all Recruiter Visit logs (after confirming), and the lists immediately update to empty without reloading the page.
+**User-visible outcome:** After unlocking the Owner Access Panel with the correct password, the owner can edit and save address/location, phone number, and email without any administrator access error, and the updated contact info persists after refresh and appears on the public site.

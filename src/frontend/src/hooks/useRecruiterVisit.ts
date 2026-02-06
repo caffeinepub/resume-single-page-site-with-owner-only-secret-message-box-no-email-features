@@ -17,16 +17,16 @@ export function useLogRecruiterVisit() {
   });
 }
 
-export function useGetRecruiterVisits(password: string) {
+export function useGetRecruiterVisits() {
   const { actor, isFetching } = useActor();
 
   return useQuery<RecruiterVisit[]>({
-    queryKey: ['recruiterVisits', password],
+    queryKey: ['recruiterVisits'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.getRecruiterVisits(password);
+      return actor.getRecruiterVisits();
     },
-    enabled: !!actor && !isFetching && !!password,
+    enabled: !!actor && !isFetching,
     retry: false,
   });
 }
@@ -36,9 +36,9 @@ export function useClearRecruiterVisits() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (password: string) => {
+    mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.clearRecruiterVisits(password);
+      return actor.clearRecruiterVisits();
     },
     onSuccess: () => {
       // Invalidate all recruiter visit queries to refresh the list

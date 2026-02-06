@@ -19,7 +19,7 @@ interface RecruiterVisitsViewProps {
 }
 
 export default function RecruiterVisitsView({ onBack, ownerPassword }: RecruiterVisitsViewProps) {
-  const { data: visits, isLoading, error } = useGetRecruiterVisits(ownerPassword);
+  const { data: visits, isLoading, error } = useGetRecruiterVisits();
   const clearMutation = useClearRecruiterVisits();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -36,7 +36,7 @@ export default function RecruiterVisitsView({ onBack, ownerPassword }: Recruiter
 
   const handleClearAll = async () => {
     try {
-      await clearMutation.mutateAsync(ownerPassword);
+      await clearMutation.mutateAsync();
       setShowConfirmDialog(false);
     } catch (err) {
       console.error('Failed to clear visits:', err);
@@ -82,7 +82,7 @@ export default function RecruiterVisitsView({ onBack, ownerPassword }: Recruiter
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
           <p className="text-red-800 font-medium mb-2">Authorization Error</p>
           <p className="text-red-600 text-sm">
-            {error instanceof Error ? error.message : 'Failed to load visits. Please check your password.'}
+            {error instanceof Error ? error.message : 'Failed to load visits. Please check your authorization.'}
           </p>
         </div>
       ) : isLoading ? (

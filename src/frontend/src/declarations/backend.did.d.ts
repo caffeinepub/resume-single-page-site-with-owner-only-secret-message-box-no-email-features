@@ -15,13 +15,18 @@ export interface Certification {
   'year' : bigint,
   'issuer' : string,
 }
+export interface ContactDetails {
+  'email' : string,
+  'address' : string,
+  'phone' : string,
+}
 export interface Content {
+  'contact' : ContactDetails,
   'projects' : Array<Project>,
   'education' : Array<EducationEntry>,
   'heroText' : string,
   'experience' : Array<ExperienceItem>,
   'certifications' : Array<Certification>,
-  'skills' : Array<string>,
   'hobbies' : Array<string>,
 }
 export interface EducationEntry {
@@ -58,17 +63,21 @@ export interface VisitorMessage {
 }
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addSkill' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'clearRecruiterVisits' : ActorMethod<[string], undefined>,
-  'clearVisitorMessages' : ActorMethod<[string], undefined>,
+  'clearRecruiterVisits' : ActorMethod<[], undefined>,
+  'clearSkills' : ActorMethod<[], undefined>,
+  'clearVisitorMessages' : ActorMethod<[], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getContent' : ActorMethod<[], Content>,
-  'getRecruiterVisits' : ActorMethod<[string], Array<RecruiterVisit>>,
+  'getRecruiterVisits' : ActorMethod<[], Array<RecruiterVisit>>,
+  'getSkills' : ActorMethod<[], Array<string>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getVisitorMessages' : ActorMethod<[string], Array<VisitorMessage>>,
+  'getVisitorMessages' : ActorMethod<[], Array<VisitorMessage>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'logRecruiterVisit' : ActorMethod<[boolean, [] | [string]], undefined>,
+  'removeSkill' : ActorMethod<[string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitVisitorMessage' : ActorMethod<[string, string, string], undefined>,
   'updateContent' : ActorMethod<[Content, string], undefined>,

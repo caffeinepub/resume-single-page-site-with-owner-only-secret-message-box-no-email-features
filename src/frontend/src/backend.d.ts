@@ -14,12 +14,12 @@ export interface Certification {
 }
 export type Time = bigint;
 export interface Content {
+    contact: ContactDetails;
     projects: Array<Project>;
     education: Array<EducationEntry>;
     heroText: string;
     experience: Array<ExperienceItem>;
     certifications: Array<Certification>;
-    skills: Array<string>;
     hobbies: Array<string>;
 }
 export interface RecruiterVisit {
@@ -31,6 +31,11 @@ export interface VisitorMessage {
     email: string;
     message: string;
     timestamp: Time;
+}
+export interface ContactDetails {
+    email: string;
+    address: string;
+    phone: string;
 }
 export interface ExperienceItem {
     duration: string;
@@ -58,17 +63,21 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    addSkill(skill: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    clearRecruiterVisits(password: string): Promise<void>;
-    clearVisitorMessages(password: string): Promise<void>;
+    clearRecruiterVisits(): Promise<void>;
+    clearSkills(): Promise<void>;
+    clearVisitorMessages(): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getContent(): Promise<Content>;
-    getRecruiterVisits(password: string): Promise<Array<RecruiterVisit>>;
+    getRecruiterVisits(): Promise<Array<RecruiterVisit>>;
+    getSkills(): Promise<Array<string>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getVisitorMessages(password: string): Promise<Array<VisitorMessage>>;
+    getVisitorMessages(): Promise<Array<VisitorMessage>>;
     isCallerAdmin(): Promise<boolean>;
     logRecruiterVisit(isRecruiter: boolean, companyName: string | null): Promise<void>;
+    removeSkill(skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
     updateContent(newContent: Content, password: string): Promise<void>;

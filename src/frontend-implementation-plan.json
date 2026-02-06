@@ -1,39 +1,52 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Owner panel clear-all controls for Visitor Messages and Recruiter Visits",
+  "title": "Owner Panel password-gated content saving (frontend wiring + authorization error removal)",
   "requirements": [
     {
-      "id": "REQ-19",
-      "summary": "Add owner-only clear-all actions with confirmation for Visitor Messages and Recruiter Visits, calling password-gated backend clear methods and refreshing the lists via React Query invalidation.",
+      "id": "REQ-29",
+      "summary": "Ensure Owner Panel contact info edits save successfully after owner unlock, persist across refresh, and update the public hero contact block without admin authorization errors.",
       "acceptanceCriteria": [
-        "VisitorMessagesView shows a \"Clear all messages\" button when the owner is viewing the Visitor Messages log.",
-        "RecruiterVisitsView shows a \"Clear all visits\" button when the owner is viewing the Recruiter Visits log.",
-        "Clicking a clear button prompts for confirmation (e.g., modal/dialog) with English text warning that the action cannot be undone and offering Cancel/Confirm actions.",
-        "On confirm, the frontend calls the corresponding password-protected backend clear method using the already-unlocked owner password.",
-        "After a successful clear, the relevant React Query cache is invalidated/refetched so the list becomes empty without a page reload.",
-        "If the backend returns an authorization error (wrong/expired password), the UI shows an error state consistent with the existing authorization error handling in these views."
+        "After unlocking the Owner Access Panel with the correct password, updating Contact Information fields in the Content Editor and clicking “Save Changes” succeeds with no “requires administrator access” / unauthorized error.",
+        "The updated contact fields persist in the Motoko canister and remain updated after a page refresh.",
+        "The public hero contact block reflects the updated contact fields after saving (following the app’s existing React Query refresh/invalidation behavior)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useVisitorMessages.ts",
+          "path": "frontend/src/hooks/useContent.ts",
           "operation": "modify",
-          "description": "Add a React Query mutation hook (e.g., useClearVisitorMessages) that calls the backend clearVisitorMessages(password) capability and invalidates/refetches visitor-messages queries (including password-scoped query keys) so the list updates immediately after a successful clear."
+          "description": "Update the content update mutation to accept and forward an owner password when saving content so contact field changes persist without relying on admin permissions."
         },
         {
-          "path": "frontend/src/hooks/useRecruiterVisit.ts",
+          "path": "frontend/src/components/OwnerPanel/ContentEditor.tsx",
           "operation": "modify",
-          "description": "Add a React Query mutation hook (e.g., useClearRecruiterVisits) that calls the backend clearRecruiterVisits(password) capability and invalidates/refetches recruiter-visits queries (including password-scoped query keys) so the list updates immediately after a successful clear."
+          "description": "Wire the save flow to pass the unlocked owner password into the content update mutation and normalize any legacy admin/authorization error text so successful owner saves do not show “requires administrator access”."
+        }
+      ]
+    },
+    {
+      "id": "REQ-31",
+      "summary": "Wire Content Editor save logic to use the unlocked owner password from OwnerAccessPanel and block saving with a clear English error when ownerPassword is missing.",
+      "acceptanceCriteria": [
+        "When the OwnerAccessPanel is unlocked and navigates to the Content Editor, clicking “Save Changes” uses the unlocked password when calling the backend.",
+        "If the Content Editor is rendered without an ownerPassword for any reason, the UI prevents saving and shows a clear English error message indicating owner access is required.",
+        "The previous authorization error message about requiring administrator access is no longer shown during normal owner-panel saves with the correct password."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useContent.ts",
+          "operation": "modify",
+          "description": "Adjust the update-content hook API to require a password alongside Content, and call the backend update function with (newContent, password) to match the password-gated backend capability."
         },
         {
-          "path": "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "path": "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
           "operation": "modify",
-          "description": "Add a \"Clear all messages\" control visible in the owner Visitor Messages log view. Implement a confirmation dialog/modal with English irreversible-action warning text and Cancel/Confirm actions. On Confirm, call the clear mutation using the already-unlocked ownerPassword prop, then invalidate/refetch so the UI becomes empty without reload. If the clear mutation errors with authorization, surface an error state consistent with the existing Authorization Error UI in this view."
+          "description": "Ensure the unlocked password is passed through to ContentEditor via the existing ownerPassword prop (and avoid unsafe non-null assertions where the editor could render without a password)."
         },
         {
-          "path": "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+          "path": "frontend/src/components/OwnerPanel/ContentEditor.tsx",
           "operation": "modify",
-          "description": "Add a \"Clear all visits\" control visible in the owner Recruiter Visits log view. Implement a confirmation dialog/modal with English irreversible-action warning text and Cancel/Confirm actions. On Confirm, call the clear mutation using the already-unlocked ownerPassword prop, then invalidate/refetch so the UI becomes empty without reload. If the clear mutation errors with authorization, surface an error state consistent with the existing Authorization Error UI in this view."
+          "description": "Make ownerPassword optional, disable/prevent saving when it is missing, and display a clear English error message indicating owner access is required; on save, include the ownerPassword in the update call."
         }
       ]
     }

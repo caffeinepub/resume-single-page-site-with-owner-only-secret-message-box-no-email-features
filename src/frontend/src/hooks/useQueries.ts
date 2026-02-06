@@ -32,3 +32,62 @@ export function useAddSecretMessage() {
     },
   });
 }
+
+// Skills management hooks
+export function useGetSkills() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<string[]>({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getSkills();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAddSkill() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (skill: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addSkill(skill);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+    },
+  });
+}
+
+export function useRemoveSkill() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (skill: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.removeSkill(skill);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+    },
+  });
+}
+
+export function useClearSkills() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.clearSkills();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+    },
+  });
+}

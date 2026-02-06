@@ -14,6 +14,11 @@ export const UserRole = IDL.Variant({
   'guest' : IDL.Null,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const ContactDetails = IDL.Record({
+  'email' : IDL.Text,
+  'address' : IDL.Text,
+  'phone' : IDL.Text,
+});
 export const Project = IDL.Record({
   'title' : IDL.Text,
   'link' : IDL.Text,
@@ -37,12 +42,12 @@ export const Certification = IDL.Record({
   'issuer' : IDL.Text,
 });
 export const Content = IDL.Record({
+  'contact' : ContactDetails,
   'projects' : IDL.Vec(Project),
   'education' : IDL.Vec(EducationEntry),
   'heroText' : IDL.Text,
   'experience' : IDL.Vec(ExperienceItem),
   'certifications' : IDL.Vec(Certification),
-  'skills' : IDL.Vec(IDL.Text),
   'hobbies' : IDL.Vec(IDL.Text),
 });
 export const Time = IDL.Int;
@@ -59,29 +64,25 @@ export const VisitorMessage = IDL.Record({
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addSkill' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'clearRecruiterVisits' : IDL.Func([IDL.Text], [], []),
-  'clearVisitorMessages' : IDL.Func([IDL.Text], [], []),
+  'clearRecruiterVisits' : IDL.Func([], [], []),
+  'clearSkills' : IDL.Func([], [], []),
+  'clearVisitorMessages' : IDL.Func([], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getContent' : IDL.Func([], [Content], ['query']),
-  'getRecruiterVisits' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(RecruiterVisit)],
-      ['query'],
-    ),
+  'getRecruiterVisits' : IDL.Func([], [IDL.Vec(RecruiterVisit)], ['query']),
+  'getSkills' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'getVisitorMessages' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(VisitorMessage)],
-      ['query'],
-    ),
+  'getVisitorMessages' : IDL.Func([], [IDL.Vec(VisitorMessage)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'logRecruiterVisit' : IDL.Func([IDL.Bool, IDL.Opt(IDL.Text)], [], []),
+  'removeSkill' : IDL.Func([IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateContent' : IDL.Func([Content, IDL.Text], [], []),
@@ -96,6 +97,11 @@ export const idlFactory = ({ IDL }) => {
     'guest' : IDL.Null,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const ContactDetails = IDL.Record({
+    'email' : IDL.Text,
+    'address' : IDL.Text,
+    'phone' : IDL.Text,
+  });
   const Project = IDL.Record({
     'title' : IDL.Text,
     'link' : IDL.Text,
@@ -119,12 +125,12 @@ export const idlFactory = ({ IDL }) => {
     'issuer' : IDL.Text,
   });
   const Content = IDL.Record({
+    'contact' : ContactDetails,
     'projects' : IDL.Vec(Project),
     'education' : IDL.Vec(EducationEntry),
     'heroText' : IDL.Text,
     'experience' : IDL.Vec(ExperienceItem),
     'certifications' : IDL.Vec(Certification),
-    'skills' : IDL.Vec(IDL.Text),
     'hobbies' : IDL.Vec(IDL.Text),
   });
   const Time = IDL.Int;
@@ -141,29 +147,25 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addSkill' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'clearRecruiterVisits' : IDL.Func([IDL.Text], [], []),
-    'clearVisitorMessages' : IDL.Func([IDL.Text], [], []),
+    'clearRecruiterVisits' : IDL.Func([], [], []),
+    'clearSkills' : IDL.Func([], [], []),
+    'clearVisitorMessages' : IDL.Func([], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getContent' : IDL.Func([], [Content], ['query']),
-    'getRecruiterVisits' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(RecruiterVisit)],
-        ['query'],
-      ),
+    'getRecruiterVisits' : IDL.Func([], [IDL.Vec(RecruiterVisit)], ['query']),
+    'getSkills' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'getVisitorMessages' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(VisitorMessage)],
-        ['query'],
-      ),
+    'getVisitorMessages' : IDL.Func([], [IDL.Vec(VisitorMessage)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'logRecruiterVisit' : IDL.Func([IDL.Bool, IDL.Opt(IDL.Text)], [], []),
+    'removeSkill' : IDL.Func([IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateContent' : IDL.Func([Content, IDL.Text], [], []),

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import type { Content, Project } from '../../backend';
+import type { Certification } from '../../backend';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,136 +12,114 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-interface ProjectsEditorProps {
-  content: Content;
-  onUpdate: (content: Content) => void;
+interface CertificationsEditorProps {
+  certifications: Certification[];
+  onUpdate: (certifications: Certification[]) => void;
 }
 
-export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProps) {
-  const [expandedProject, setExpandedProject] = useState<number | null>(null);
+export default function CertificationsEditor({ certifications, onUpdate }: CertificationsEditorProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-  const addProject = () => {
-    const newProject: Project = {
-      title: 'New Project',
-      description: 'Project description',
-      link: '',
-      details: '',
+  const addCertification = () => {
+    const newCert: Certification = {
+      name: 'New Certification',
+      issuer: 'Issuing Organization',
+      year: BigInt(new Date().getFullYear()),
     };
-    onUpdate({
-      ...content,
-      projects: [...content.projects, newProject],
-    });
-    setExpandedProject(content.projects.length);
+    onUpdate([...certifications, newCert]);
+    setExpandedIndex(certifications.length);
   };
 
   const confirmDelete = () => {
     if (deleteIndex !== null) {
-      onUpdate({
-        ...content,
-        projects: content.projects.filter((_, i) => i !== deleteIndex),
-      });
-      if (expandedProject === deleteIndex) {
-        setExpandedProject(null);
+      onUpdate(certifications.filter((_, i) => i !== deleteIndex));
+      if (expandedIndex === deleteIndex) {
+        setExpandedIndex(null);
       }
       setDeleteIndex(null);
     }
   };
 
-  const updateProject = (index: number, field: keyof Project, value: string) => {
-    const updatedProjects = [...content.projects];
-    updatedProjects[index] = {
-      ...updatedProjects[index],
+  const updateCertification = (index: number, field: keyof Certification, value: string | bigint) => {
+    const updated = [...certifications];
+    updated[index] = {
+      ...updated[index],
       [field]: value,
     };
-    onUpdate({
-      ...content,
-      projects: updatedProjects,
-    });
+    onUpdate(updated);
   };
 
   return (
     <div className="border-t border-gray-200 pt-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-bold text-navy">Projects</h4>
+        <h4 className="text-lg font-bold text-navy">Certifications</h4>
         <button
-          onClick={addProject}
+          onClick={addCertification}
           className="flex items-center gap-2 text-sm bg-navy text-white px-3 py-2 rounded-lg hover:bg-navy/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Project
+          Add Certification
         </button>
       </div>
 
       <div className="space-y-4">
-        {content.projects.map((project, index) => (
+        {certifications.map((cert, index) => (
           <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <button
-                onClick={() => setExpandedProject(expandedProject === index ? null : index)}
+                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
                 className="flex items-center gap-2 text-navy hover:text-navy/80 transition-colors font-medium"
               >
-                {expandedProject === index ? (
+                {expandedIndex === index ? (
                   <ChevronUp className="w-4 h-4" />
                 ) : (
                   <ChevronDown className="w-4 h-4" />
                 )}
-                {project.title}
+                {cert.name}
               </button>
               <button
                 onClick={() => setDeleteIndex(index)}
                 className="text-red-600 hover:text-red-700 transition-colors"
-                title="Delete project"
+                title="Delete certification"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
 
-            {expandedProject === index && (
+            {expandedIndex === index && (
               <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
+                    Certification Name
                   </label>
                   <input
                     type="text"
-                    value={project.title}
-                    onChange={(e) => updateProject(index, 'title', e.target.value)}
+                    value={cert.name}
+                    onChange={(e) => updateCertification(index, 'name', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    value={project.description}
-                    onChange={(e) => updateProject(index, 'description', e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Link
+                    Issuing Organization
                   </label>
                   <input
-                    type="url"
-                    value={project.link}
-                    onChange={(e) => updateProject(index, 'link', e.target.value)}
+                    type="text"
+                    value={cert.issuer}
+                    onChange={(e) => updateCertification(index, 'issuer', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
-                    placeholder="https://..."
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Details (shown when expanded)
+                    Year
                   </label>
-                  <textarea
-                    value={project.details}
-                    onChange={(e) => updateProject(index, 'details', e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm resize-none"
+                  <input
+                    type="number"
+                    value={Number(cert.year)}
+                    onChange={(e) => updateCertification(index, 'year', BigInt(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-transparent text-sm"
                   />
                 </div>
               </div>
@@ -149,9 +127,9 @@ export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProp
           </div>
         ))}
 
-        {content.projects.length === 0 && (
+        {certifications.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            No projects yet. Click "Add Project" to create one.
+            No certifications yet. Click "Add Certification" to create one.
           </div>
         )}
       </div>
@@ -159,9 +137,9 @@ export default function ProjectsEditor({ content, onUpdate }: ProjectsEditorProp
       <AlertDialog open={deleteIndex !== null} onOpenChange={(open) => !open && setDeleteIndex(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogTitle>Delete Certification</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deleteIndex !== null ? content.projects[deleteIndex].title : ''}"? This action cannot be undone.
+              Are you sure you want to delete "{deleteIndex !== null ? certifications[deleteIndex].name : ''}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

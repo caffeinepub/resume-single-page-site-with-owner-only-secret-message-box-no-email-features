@@ -18,16 +18,16 @@ export function useSubmitVisitorMessage() {
   });
 }
 
-export function useGetVisitorMessages(password: string) {
+export function useGetVisitorMessages() {
   const { actor, isFetching } = useActor();
 
   return useQuery<VisitorMessage[]>({
-    queryKey: ['visitorMessages', password],
+    queryKey: ['visitorMessages'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.getVisitorMessages(password);
+      return actor.getVisitorMessages();
     },
-    enabled: !!actor && !isFetching && !!password,
+    enabled: !!actor && !isFetching,
     retry: false,
   });
 }
@@ -37,9 +37,9 @@ export function useClearVisitorMessages() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (password: string) => {
+    mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.clearVisitorMessages(password);
+      return actor.clearVisitorMessages();
     },
     onSuccess: () => {
       // Invalidate all visitor message queries to refresh the list

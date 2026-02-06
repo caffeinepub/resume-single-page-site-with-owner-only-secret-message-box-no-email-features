@@ -1,3 +1,4 @@
+import Set "mo:core/Set";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Text "mo:core/Text";
@@ -8,39 +9,15 @@ import Principal "mo:core/Principal";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+// Apply data migration on upgrade.
+
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // User Profile Type
-  public type UserProfile = {
-    name : Text;
-  };
-
-  let userProfiles = Map.empty<Principal, UserProfile>();
-
-  // User Profile Methods
-  public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
-    };
-    userProfiles.get(caller);
-  };
-
-  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
-    };
-    userProfiles.get(user);
-  };
-
-  public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save profiles");
-    };
-    userProfiles.add(caller, profile);
-  };
+  // Password for owner operations
+  let ownerPassword = "BirdOnTree3";
 
   // Application Types
   public type RecruiterVisit = {
@@ -55,14 +32,20 @@ actor {
     timestamp : Time.Time;
   };
 
+  public type ContactDetails = {
+    address : Text;
+    phone : Text;
+    email : Text;
+  };
+
   public type Content = {
     heroText : Text;
     education : [EducationEntry];
     experience : [ExperienceItem];
-    skills : [Text];
     certifications : [Certification];
     hobbies : [Text];
     projects : [Project];
+    contact : ContactDetails;
   };
 
   public type EducationEntry = {
@@ -91,25 +74,58 @@ actor {
     details : Text;
   };
 
+  public type Skill = {
+    name : Text;
+    level : Text; // e.g., "Beginner", "Intermediate", "Advanced"
+  };
+
+  public type UserProfile = {
+    name : Text;
+  };
+
   // State
   var recruiterVisits = List.empty<RecruiterVisit>();
   var visitorMessages = List.empty<VisitorMessage>();
+  var skills = Set.empty<Text>();
   var content = {
     heroText = "Welcome to my resume!";
     education = [] : [EducationEntry];
     experience = [] : [ExperienceItem];
-    skills = [] : [Text];
     certifications = [] : [Certification];
     hobbies = [] : [Text];
     projects = [] : [Project];
+    contact = {
+      address = "Turku, Finland";
+      phone = "+358 49 5029094";
+      email = "niklas.liebmann@gmail.com";
+    };
   };
 
-  // Password for owner access panel
-  let ownerPanelPassword = "BirdOnTree3";
+  let userProfiles = Map.empty<Principal, UserProfile>();
 
-  // Public Methods - No authorization required
+  // User Profile Methods
+  public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can access profiles");
+    };
+    userProfiles.get(caller);
+  };
 
-  // Public: Anyone can log a recruiter visit
+  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own profile");
+    };
+    userProfiles.get(user);
+  };
+
+  public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can save profiles");
+    };
+    userProfiles.add(caller, profile);
+  };
+
+  // Public Methods - No authentication required (guests can access)
   public shared ({ caller }) func logRecruiterVisit(isRecruiter : Bool, companyName : ?Text) : async () {
     if (not isRecruiter) { return };
 
@@ -120,7 +136,6 @@ actor {
     recruiterVisits.add(visit);
   };
 
-  // Public: Anyone can submit a visitor message
   public shared ({ caller }) func submitVisitorMessage(name : Text, email : Text, message : Text) : async () {
     let visitorMessage : VisitorMessage = {
       name;
@@ -131,47 +146,72 @@ actor {
     visitorMessages.add(visitorMessage);
   };
 
-  // Public: Anyone can view content
   public query ({ caller }) func getContent() : async Content {
     content;
   };
 
-  // Owner-Only Methods - Password protected
+  public query ({ caller }) func getSkills() : async [Text] {
+    skills.toArray();
+  };
 
-  // Owner only: Update site content with password
+  // Owner-only Methods (password protected)
   public shared ({ caller }) func updateContent(newContent : Content, password : Text) : async () {
-    checkPassword(password);
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Invalid password for updating content");
+    };
     content := newContent;
   };
 
-  // Owner only: View recruiter visits with password
-  public query ({ caller }) func getRecruiterVisits(password : Text) : async [RecruiterVisit] {
-    checkPassword(password);
+  // Admin-only Methods
+  public shared ({ caller }) func addSkill(skill : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can add skills");
+    };
+    skills.add(skill);
+  };
+
+  public shared ({ caller }) func removeSkill(skill : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can remove skills");
+    };
+    if (not skills.contains(skill)) {
+      Runtime.trap("Skill does not exist");
+    };
+    skills.remove(skill);
+  };
+
+  public shared ({ caller }) func clearSkills() : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can clear skills");
+    };
+    skills := Set.empty<Text>();
+  };
+
+  public query ({ caller }) func getRecruiterVisits() : async [RecruiterVisit] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view recruiter visits");
+    };
     recruiterVisits.toArray();
   };
 
-  // Owner only: View visitor messages with password
-  public query ({ caller }) func getVisitorMessages(password : Text) : async [VisitorMessage] {
-    checkPassword(password);
+  public query ({ caller }) func getVisitorMessages() : async [VisitorMessage] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view visitor messages");
+    };
     visitorMessages.toArray();
   };
 
-  // Owner only: Clear visitor messages with password
-  public shared ({ caller }) func clearVisitorMessages(password : Text) : async () {
-    checkPassword(password);
+  public shared ({ caller }) func clearVisitorMessages() : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can clear visitor messages");
+    };
     visitorMessages := List.empty<VisitorMessage>();
   };
 
-  // Owner only: Clear recruiter visit logs with password
-  public shared ({ caller }) func clearRecruiterVisits(password : Text) : async () {
-    checkPassword(password);
-    recruiterVisits := List.empty<RecruiterVisit>();
-  };
-
-  // Helper function to check owner password
-  func checkPassword(password : Text) : () {
-    if (password != ownerPanelPassword) {
-      Runtime.trap("Unauthorized: Incorrect password for owner panel");
+  public shared ({ caller }) func clearRecruiterVisits() : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can clear recruiter visits");
     };
+    recruiterVisits := List.empty<RecruiterVisit>();
   };
 };
