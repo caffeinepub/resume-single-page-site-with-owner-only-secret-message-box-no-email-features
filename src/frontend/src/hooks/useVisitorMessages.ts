@@ -12,7 +12,6 @@ export function useSubmitVisitorMessage() {
       return actor.submitVisitorMessage(name, email, message);
     },
     onSuccess: () => {
-      // Invalidate all visitor message queries including password-scoped ones
       queryClient.invalidateQueries({ queryKey: ['visitorMessages'] });
     },
   });
@@ -42,7 +41,6 @@ export function useClearVisitorMessages() {
       return actor.clearVisitorMessages();
     },
     onSuccess: () => {
-      // Invalidate all visitor message queries to refresh the list
       queryClient.invalidateQueries({ queryKey: ['visitorMessages'] });
     },
   });

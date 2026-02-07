@@ -80,7 +80,7 @@ export interface _SERVICE {
   'removeSkill' : ActorMethod<[string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitVisitorMessage' : ActorMethod<[string, string, string], undefined>,
-  'updateContent' : ActorMethod<[Content, string], undefined>,
+  'updateContent' : ActorMethod<[Content], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

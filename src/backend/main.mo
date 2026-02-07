@@ -5,19 +5,17 @@ import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
+import Migration "migration";
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
 // Apply data migration on upgrade.
-
+(with migration = Migration.run)
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
-
-  // Password for owner operations
-  let ownerPassword = "BirdOnTree3";
 
   // Application Types
   public type RecruiterVisit = {
@@ -154,15 +152,28 @@ actor {
     skills.toArray();
   };
 
-  // Owner-only Methods (password protected)
-  public shared ({ caller }) func updateContent(newContent : Content, password : Text) : async () {
-    if (password != ownerPassword) {
-      Runtime.trap("Unauthorized: Invalid password for updating content");
+  // Admin Panel Methods (role-based access control)
+  public query ({ caller }) func getRecruiterVisits() : async [RecruiterVisit] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view recruiter visits");
+    };
+    recruiterVisits.toArray();
+  };
+
+  public query ({ caller }) func getVisitorMessages() : async [VisitorMessage] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view visitor messages");
+    };
+    visitorMessages.toArray();
+  };
+
+  public shared ({ caller }) func updateContent(newContent : Content) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can update content");
     };
     content := newContent;
   };
 
-  // Admin-only Methods
   public shared ({ caller }) func addSkill(skill : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can add skills");
@@ -187,20 +198,6 @@ actor {
     skills := Set.empty<Text>();
   };
 
-  public query ({ caller }) func getRecruiterVisits() : async [RecruiterVisit] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view recruiter visits");
-    };
-    recruiterVisits.toArray();
-  };
-
-  public query ({ caller }) func getVisitorMessages() : async [VisitorMessage] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view visitor messages");
-    };
-    visitorMessages.toArray();
-  };
-
   public shared ({ caller }) func clearVisitorMessages() : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can clear visitor messages");
@@ -215,3 +212,4 @@ actor {
     recruiterVisits := List.empty<RecruiterVisit>();
   };
 };
+

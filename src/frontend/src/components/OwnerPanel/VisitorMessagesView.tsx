@@ -35,9 +35,7 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
   };
 
   // Sort messages by timestamp, newest first
-  const sortedMessages = messages ? [...messages].sort((a, b) => {
-    return Number(b.timestamp - a.timestamp);
-  }) : [];
+  const sortedMessages = messages ? [...messages].sort((a, b) => Number(b.timestamp - a.timestamp)) : [];
 
   const handleClearAll = async () => {
     try {
@@ -59,7 +57,7 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
           Back to Menu
         </button>
 
-        {sortedMessages.length > 0 && !error && (
+        {messages && messages.length > 0 && !error && (
           <Button
             variant="destructive"
             size="sm"
@@ -97,38 +95,36 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
         </div>
       ) : sortedMessages.length > 0 ? (
         <div className="space-y-4">
-          {sortedMessages.map((msg, index) => (
+          {sortedMessages.map((message, index) => (
             <div
               key={index}
               className="bg-gray-50 rounded-lg p-4 border border-gray-200"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-navy" />
-                  <span className="font-medium text-navy">{msg.name}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(msg.timestamp)}</span>
+              <div className="flex items-start gap-3 mb-3">
+                <User className="w-5 h-5 text-navy mt-1" />
+                <div className="flex-1">
+                  <p className="font-medium text-navy">{message.name}</p>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                    <Mail className="w-4 h-4" />
+                    <a href={`mailto:${message.email}`} className="hover:text-navy transition-colors">
+                      {message.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>{formatDate(message.timestamp)}</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                <Mail className="w-4 h-4" />
-                <a href={`mailto:${msg.email}`} className="hover:text-navy transition-colors">
-                  {msg.email}
-                </a>
+              <div className="pl-8">
+                <p className="text-gray-700 whitespace-pre-wrap">{message.message}</p>
               </div>
-              <p className="text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border border-gray-200">
-                {msg.message}
-              </p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-          <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">No visitor messages yet</p>
-          <p className="text-gray-400 text-sm mt-1">Messages submitted through the contact form will appear here</p>
+        <div className="text-center py-12 text-gray-500">
+          No visitor messages yet.
         </div>
       )}
 
@@ -152,13 +148,5 @@ export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMe
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
-}
-
-function MessageSquare({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-    </svg>
   );
 }

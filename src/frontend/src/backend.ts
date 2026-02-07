@@ -163,7 +163,7 @@ export interface backendInterface {
     removeSkill(skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
-    updateContent(newContent: Content, password: string): Promise<void>;
+    updateContent(newContent: Content): Promise<void>;
 }
 import type { RecruiterVisit as _RecruiterVisit, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -420,17 +420,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateContent(arg0: Content, arg1: string): Promise<void> {
+    async updateContent(arg0: Content): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateContent(arg0, arg1);
+                const result = await this.actor.updateContent(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateContent(arg0, arg1);
+            const result = await this.actor.updateContent(arg0);
             return result;
         }
     }

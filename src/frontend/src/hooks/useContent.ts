@@ -20,9 +20,9 @@ export function useUpdateContent() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ content, password }: { content: Content; password: string }) => {
+    mutationFn: async (content: Content) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateContent(content, password);
+      return actor.updateContent(content);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content'] });

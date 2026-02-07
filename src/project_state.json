@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 17,
-  "summary": "Build a modern single-page resume website for Hatem Alsakhboori with minimalist navy/gold design, smooth navigation, dynamic hover/scroll animations, a page-load recruiter prompt with recruiter visit logging, a visitor message box collecting name/email/message stored in the Motoko backend (no email sending), and a single unified owner access panel entered via clicking the corner name (password: BirdOnTree3) to view visitor message logs (“learn more” messages) and recruiter logs and edit site content (including an editable Projects section). Remove the separate secret-message system and remove all Internet Identity gating from the owner panel.",
+  "projectStateVersion": 21,
+  "summary": "Build a modern single-page resume website with the same functionality/spec as the current app, but as a separate cloned project deployed under a new domain/app name \"Hatem23\" (i.e., a new app/canister/domain rather than renaming the existing one).",
   "architectural_notes": [
     "Email collection is now allowed for the visitor message box and recruiter tracking, but the app must not send emails (storage/viewing only).",
     "Store visitor messages, recruiter logs, editable site content, and projects in the Motoko backend canister (no external DB).",
@@ -9,15 +9,17 @@
     "Owner/admin authentication must not use Internet Identity; use only the specified password gate.",
     "Add owner-only backend endpoints (password-gated via BirdOnTree3) to clear/purge visitor message logs and recruiter visit logs; expose corresponding 'Clear logs' actions in the owner panel UI.",
     "Owner CMS must support full CRUD on list-based sections (Education, Experience, Hobbies, etc.), including delete operations persisted in the Motoko backend.",
-    "Expose contact fields (address, phone, email) as part of the owner-editable site content model stored in the Motoko backend (no email sending)."
+    "Expose contact fields (address, phone, email) as part of the owner-editable site content model stored in the Motoko backend (no email sending).",
+    "Create a separate cloned deployment (new project/app/canister + new domain) named \"Hatem23\" while keeping the existing app intact; features/spec remain identical."
   ],
   "known_issues": [
     "Build/rebuild attempts failed on the platform due to conflicting/stacked specs; requires a single clean consolidated specification (now provided in conversation).",
     "Owner panel is still showing the platform Internet Identity login instead of the BirdOnTree3 password prompt (needs full removal of II code and cache-proof deployment).",
     "Visitor message log is not displaying newly submitted messages after typing/submission (persistence/display bug).",
-    "Contact info editing (address/email) in the owner/admin panel fails with an \"requires administrator access\" error even after unlocking the panel; owner authorization gating is misapplied/broken for contact update endpoint/UI."
+    "Contact info editing (address/email) in the owner/admin panel fails with an \"requires administrator access\" error even after unlocking the panel; owner authorization gating is misapplied/broken for contact update endpoint/UI.",
+    "Owner panel password prompt is rejecting the correct password (BirdOnTree3); owner access is effectively broken (likely due to remaining admin/AccessControl gating in backend/owner actions)."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-a-modern-single-page-resume-website-for-hatem-alsakhboori-using-the-provided-resume-content-including-sections-for-hero-name-contact-links-education-experience-technical-skills-certifications-leadership-and-hobbies-interests-with-smooth-in-page-navigation-scroll-and-mobile-responsiveness",
@@ -218,6 +220,38 @@
         "REQ-31"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-owner-panel-data-fetching-and-mutations-to-call-the-new-password-gated-backend-methods-and-to-pass-the-unlocked-owner-password-through-from-owneraccesspanel-into-recruitervisitsview-visitormessagesview-and-contenteditor-including-skills-add-remove-clear",
+      "title": "Update the frontend Owner Panel data-fetching and mutations to call the new password-gated backend methods and to pass the unlocked owner password through from OwnerAccessPanel into: RecruiterVisitsView, VisitorMessagesView, and ContentEditor (including skills add/remove/clear).",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-the-owner-panel-password-prompt-so-that-entering-birdontree3-reliably-unlocks-the-panel-by-trimming-leading-trailing-whitespace-from-the-input-before-comparison-while-keeping-the-password-otherwise-case-sensitive-keep-all-user-facing-text-in-english",
+      "title": "Harden the Owner Panel password prompt so that entering \"BirdOnTree3\" reliably unlocks the panel by trimming leading/trailing whitespace from the input before comparison, while keeping the password otherwise case-sensitive. Keep all user-facing text in English.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-brand-new-separate-application-deployment-new-project-canister-domain-named-hatem23-by-cloning-copying-the-entire-current-resume-site-project-so-that-the-new-deployment-has-the-same-functionality-ui-and-backend-behavior-as-the-existing-app",
+      "title": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-cloned-app-s-visible-app-labeling-metadata-to-reflect-the-new-app-name-hatem23-where-applicable-for-example-the-html-document-title-while-keeping-all-user-facing-text-in-english",
+      "title": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -346,10 +380,32 @@
         "REQ-30"
       ],
       "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Make all Owner Panel backend operations work using only the owner password \"BirdOnTree3\" (no AccessControl/#admin checks) by adding password-gated canister methods for: (1) listing recruiter visits, (2) listing visitor messages, (3) clearing recruiter visits, (4) clearing visitor messages, and (5) skills CRUD/clear. Ensure these methods trap with an \"Unauthorized\" error when the password is invalid.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Clone/copy the entire existing resume-site project into a brand-new separate app/project with a different domain, named \"Hatem23\" (keep all features/spec the same; do not rename/replace the original app)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Resume single-page site with unified owner access via corner name (BirdOnTree3)",
+  "projectName": "Hatem23",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

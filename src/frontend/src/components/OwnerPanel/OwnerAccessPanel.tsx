@@ -23,8 +23,10 @@ export default function OwnerAccessPanel({ onClose }: OwnerAccessPanelProps) {
     e.preventDefault();
     setError('');
 
-    if (password === OWNER_PANEL_PASSWORD) {
-      setUnlockedPassword(password);
+    const trimmedPassword = password.trim();
+
+    if (trimmedPassword === OWNER_PANEL_PASSWORD) {
+      setUnlockedPassword(trimmedPassword);
       setCurrentView('menu');
       setPassword('');
       // Invalidate queries to fetch fresh data with the password

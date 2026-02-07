@@ -85,7 +85,7 @@ export const idlService = IDL.Service({
   'removeSkill' : IDL.Func([IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-  'updateContent' : IDL.Func([Content, IDL.Text], [], []),
+  'updateContent' : IDL.Func([Content], [], []),
 });
 
 export const idlInitArgs = [];
@@ -168,7 +168,7 @@ export const idlFactory = ({ IDL }) => {
     'removeSkill' : IDL.Func([IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-    'updateContent' : IDL.Func([Content, IDL.Text], [], []),
+    'updateContent' : IDL.Func([Content], [], []),
   });
 };
 

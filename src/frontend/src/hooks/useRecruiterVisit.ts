@@ -41,7 +41,6 @@ export function useClearRecruiterVisits() {
       return actor.clearRecruiterVisits();
     },
     onSuccess: () => {
-      // Invalidate all recruiter visit queries to refresh the list
       queryClient.invalidateQueries({ queryKey: ['recruiterVisits'] });
     },
   });

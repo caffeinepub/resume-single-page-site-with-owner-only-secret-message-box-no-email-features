@@ -1,85 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Fix owner panel authorization so contact info edits can be saved without admin access errors",
+  "title": "Clone existing resume app into a new separate deployment/domain named Hatem23",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-29",
-      "text": "Fix the Owner Panel “Edit Website Content” save flow so editing Contact Information (address/location, phone number, email) does not fail with an authorization error after the owner has successfully unlocked the Owner Access Panel with password \"BirdOnTree3\".",
+      "id": "REQ-35",
+      "text": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-user-1",
+          "msg-user-2"
         ],
         "quotes": [
-          "Whenever I try to change the contact info and the adress and the email it says it requires an admistrator access. Although I am in the adminstrator panel. fix that please"
+          "yes copy the whole project in a new domain that's all",
+          "No the new domain Name should be Hatem23"
         ]
       },
       "acceptanceCriteria": [
-        "After unlocking the Owner Access Panel with the correct password, updating Contact Information fields in the Content Editor and clicking “Save Changes” succeeds with no “requires administrator access” / unauthorized error.",
-        "The updated contact fields persist in the Motoko canister and remain updated after a page refresh.",
-        "The public hero contact block reflects the updated contact fields after saving (following the app’s existing React Query refresh/invalidation behavior)."
+        "A new, separately accessible deployment exists under the app/domain name \"Hatem23\".",
+        "The existing/original app remains available and unchanged.",
+        "The \"Hatem23\" deployment includes the same frontend pages/sections and the same backend capabilities (recruiter prompt logging, visitor messages, owner panel + CMS, projects, etc.)."
       ]
     },
     {
-      "id": "REQ-30",
-      "text": "Update the backend to support password-gated owner write operations (at minimum: updating Content used by the site) so that the Owner Panel can update content without relying on Internet Identity admin permissions. The password to authorize these owner operations must be \"BirdOnTree3\".",
+      "id": "REQ-36",
+      "text": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-user-1"
         ],
         "quotes": [
-          "it says it requires an admistrator access. Although I am in the adminstrator panel"
+          "yes copy the whole project in a new domain that's all"
         ]
       },
       "acceptanceCriteria": [
-        "The backend exposes an owner-password-gated method for updating site content (including contact details) that succeeds when the correct password \"BirdOnTree3\" is provided and traps/returns an error when it is not.",
-        "The existing public read method(s) (e.g., getContent) remain publicly accessible and unchanged in behavior.",
-        "Saving content from the Owner Panel no longer depends on AccessControl admin permissions tied to the caller principal."
+        "New recruiter visits, visitor messages, and CMS edits created in \"Hatem23\" do not affect or appear in the original app, and vice versa."
       ]
     },
     {
-      "id": "REQ-31",
-      "text": "Wire the frontend Content Editor save logic to call the password-gated backend update method using the already-available unlocked password stored in the OwnerAccessPanel (passed into ContentEditor as the ownerPassword prop).",
+      "id": "REQ-37",
+      "text": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-user-2"
         ],
         "quotes": [
-          "Although I am in the adminstrator panel. fix that please"
+          "No the new domain Name should be Hatem23"
         ]
       },
       "acceptanceCriteria": [
-        "When the OwnerAccessPanel is unlocked and navigates to the Content Editor, clicking “Save Changes” uses the unlocked password when calling the backend.",
-        "If the Content Editor is rendered without an ownerPassword for any reason, the UI prevents saving and shows a clear English error message indicating owner access is required.",
-        "The previous authorization error message about requiring administrator access is no longer shown during normal owner-panel saves with the correct password."
+        "The cloned app’s browser tab/title displays \"Hatem23\" (or clearly includes \"Hatem23\").",
+        "All user-facing UI text remains English."
       ]
     }
   ],
   "constraints": [
-    "Respect the Internet Computer single-actor backend architecture: all Motoko logic must remain in backend/main.mo.",
-    "Do not edit files under frontend/src/components/ui or other frontend immutablePaths listed in SYSTEM_CONTEXT.",
-    "Use English for any user-facing text."
+    "Do not rename or replace the existing/original app; create a separate cloned deployment.",
+    "Keep all existing functionality/spec the same in the cloned \"Hatem23\" app unless explicitly requested otherwise.",
+    "Respect the single-actor backend architecture (all Motoko logic remains in backend/main.mo).",
+    "Do not modify any frontend files under frontend/src/components/ui or other paths listed as immutable in SYSTEM_CONTEXT.",
+    "Do not add any email-sending functionality (storing email as part of visitor submissions is allowed; sending is not)."
   ],
   "nonGoals": [
-    "Re-introducing Internet Identity gating for the Owner Access Panel.",
-    "Adding any email-sending functionality.",
-    "Changing the public recruiter prompt behavior or visitor message submission behavior beyond what is necessary to fix the owner content save authorization issue."
+    "Adding new features beyond cloning/separating the deployment under the name \"Hatem23\".",
+    "Changing the resume content, styling theme, or owner password behavior as part of the cloning (except for updating app labeling/metadata to \"Hatem23\")."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T23:26:47.113Z",
+  "generatedAt": "2026-02-07T00:09:41.163Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,53 +11,68 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-29",
-        "summary": "Fix the Owner Panel “Edit Website Content” save flow so editing Contact Information (address/location, phone number, email) does not fail with an authorization error after the owner has successfully unlocked the Owner Access Panel with password \"BirdOnTree3\".",
+        "id": "REQ-35",
+        "summary": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useContent.ts",
-          "frontend/src/components/OwnerPanel/ContentEditor.tsx"
+          "frontend/src/appConfig.ts",
+          "frontend/src/App.tsx",
+          "frontend/.env.hatem23",
+          "frontend/README-Hatem23-deployment.md"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useContent.ts",
-          "frontend/src/components/OwnerPanel/ContentEditor.tsx"
+          "frontend/src/appConfig.ts",
+          "frontend/src/App.tsx",
+          "frontend/.env.hatem23",
+          "frontend/README-Hatem23-deployment.md"
         ]
       },
       {
-        "id": "REQ-30",
-        "summary": "Update the backend to support password-gated owner write operations (at minimum: updating Content used by the site) so that the Owner Panel can update content without relying on Internet Identity admin permissions. The password to authorize these owner operations must be \"BirdOnTree3\".",
+        "id": "REQ-36",
+        "summary": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-31",
-        "summary": "Wire the frontend Content Editor save logic to call the password-gated backend update method using the already-available unlocked password stored in the OwnerAccessPanel (passed into ContentEditor as the ownerPassword prop).",
+        "id": "REQ-37",
+        "summary": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useContent.ts",
-          "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
-          "frontend/src/components/OwnerPanel/ContentEditor.tsx"
+          "frontend/index.html",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useContent.ts",
-          "frontend/src/components/OwnerPanel/ContentEditor.tsx"
+          "frontend/index.html",
+          "frontend/src/App.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/.env.hatem23",
+    "frontend/README-Hatem23-deployment.md",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/appConfig.ts",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
     "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+    "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+    "frontend/src/components/OwnerPanel/SkillsEditor.tsx",
+    "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useContent.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useRecruiterVisit.ts",
+    "frontend/src/hooks/useVisitorMessages.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

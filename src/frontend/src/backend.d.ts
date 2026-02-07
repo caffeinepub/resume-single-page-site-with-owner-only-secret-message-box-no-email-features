@@ -80,5 +80,5 @@ export interface backendInterface {
     removeSkill(skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
-    updateContent(newContent: Content, password: string): Promise<void>;
+    updateContent(newContent: Content): Promise<void>;
 }

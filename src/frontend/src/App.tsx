@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopNav from './components/TopNav';
 import Section from './components/Section';
 import RecruiterPromptModal from './components/RecruiterPromptModal';
@@ -8,6 +8,7 @@ import OwnerAccessPanel from './components/OwnerPanel/OwnerAccessPanel';
 import { useGetContent } from './hooks/useContent';
 import { useGetSkills } from './hooks/useQueries';
 import { resumeContent } from './resumeContent';
+import { appConfig } from './appConfig';
 import { Mail, MapPin, Phone, Linkedin } from 'lucide-react';
 
 export default function App() {
@@ -15,6 +16,11 @@ export default function App() {
   const [showOwnerPanel, setShowOwnerPanel] = useState(false);
   const { data: content, isLoading: contentLoading } = useGetContent();
   const { data: skills, isLoading: skillsLoading } = useGetSkills();
+
+  // Set document title based on app configuration
+  useEffect(() => {
+    document.title = appConfig.appName;
+  }, []);
 
   // Use backend content if available, fallback to static content
   const displayContent = content || {
@@ -309,7 +315,7 @@ export default function App() {
           onClick={() => setShowOwnerPanel(true)}
           className="fixed bottom-6 right-6 text-xs text-gray-400 hover:text-gold transition-colors cursor-pointer z-30"
         >
-          Hatem Alsakhboori
+          {appConfig.ownerName}
         </button>
 
         {/* Footer */}

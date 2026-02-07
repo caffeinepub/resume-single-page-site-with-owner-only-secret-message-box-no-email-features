@@ -1,52 +1,56 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Owner Panel password-gated content saving (frontend wiring + authorization error removal)",
+  "title": "Clone resume app frontend for separate Hatem23 deployment",
   "requirements": [
     {
-      "id": "REQ-29",
-      "summary": "Ensure Owner Panel contact info edits save successfully after owner unlock, persist across refresh, and update the public hero contact block without admin authorization errors.",
+      "id": "REQ-35",
+      "summary": "Add frontend-side configuration to support a separately deployable clone named Hatem23 without changing existing app behavior.",
       "acceptanceCriteria": [
-        "After unlocking the Owner Access Panel with the correct password, updating Contact Information fields in the Content Editor and clicking “Save Changes” succeeds with no “requires administrator access” / unauthorized error.",
-        "The updated contact fields persist in the Motoko canister and remain updated after a page refresh.",
-        "The public hero contact block reflects the updated contact fields after saving (following the app’s existing React Query refresh/invalidation behavior)."
+        "A new, separately accessible deployment exists under the app/domain name \"Hatem23\".",
+        "The existing/original app remains available and unchanged.",
+        "The \"Hatem23\" deployment includes the same frontend pages/sections and the same backend capabilities (recruiter prompt logging, visitor messages, owner panel + CMS, projects, etc.)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useContent.ts",
-          "operation": "modify",
-          "description": "Update the content update mutation to accept and forward an owner password when saving content so contact field changes persist without relying on admin permissions."
+          "path": "frontend/src/appConfig.ts",
+          "operation": "create",
+          "description": "Create a small app configuration module that centralizes deployment-specific metadata (e.g., app name) using build-time environment variables with sensible defaults for the Hatem23 clone."
         },
         {
-          "path": "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire the save flow to pass the unlocked owner password into the content update mutation and normalize any legacy admin/authorization error text so successful owner saves do not show “requires administrator access”."
+          "description": "Wire the new appConfig into the app so runtime labeling (e.g., document title) can be set based on the cloned deployment configuration while keeping all existing resume UI/sections and flows unchanged."
+        },
+        {
+          "path": "frontend/.env.hatem23",
+          "operation": "create",
+          "description": "Add a deployment-specific environment file for the Hatem23 clone (e.g., VITE_APP_NAME) to support separate build/deploy configuration for the cloned frontend."
+        },
+        {
+          "path": "frontend/README-Hatem23-deployment.md",
+          "operation": "create",
+          "description": "Document the frontend build-time settings needed for the Hatem23 clone (app name and any required canister/config values) to ensure the cloned deployment points to its own backend and remains separate from the original."
         }
       ]
     },
     {
-      "id": "REQ-31",
-      "summary": "Wire Content Editor save logic to use the unlocked owner password from OwnerAccessPanel and block saving with a clear English error when ownerPassword is missing.",
+      "id": "REQ-37",
+      "summary": "Update cloned app labeling/metadata to display the name Hatem23 while keeping all UI text in English.",
       "acceptanceCriteria": [
-        "When the OwnerAccessPanel is unlocked and navigates to the Content Editor, clicking “Save Changes” uses the unlocked password when calling the backend.",
-        "If the Content Editor is rendered without an ownerPassword for any reason, the UI prevents saving and shows a clear English error message indicating owner access is required.",
-        "The previous authorization error message about requiring administrator access is no longer shown during normal owner-panel saves with the correct password."
+        "The cloned app’s browser tab/title displays \"Hatem23\" (or clearly includes \"Hatem23\").",
+        "All user-facing UI text remains English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useContent.ts",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Adjust the update-content hook API to require a password alongside Content, and call the backend update function with (newContent, password) to match the password-gated backend capability."
+          "description": "Update the HTML document title metadata so the browser tab/title clearly includes \"Hatem23\" while keeping the document language and user-facing text English."
         },
         {
-          "path": "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Ensure the unlocked password is passed through to ContentEditor via the existing ownerPassword prop (and avoid unsafe non-null assertions where the editor could render without a password)."
-        },
-        {
-          "path": "frontend/src/components/OwnerPanel/ContentEditor.tsx",
-          "operation": "modify",
-          "description": "Make ownerPassword optional, disable/prevent saving when it is missing, and display a clear English error message indicating owner access is required; on save, include the ownerPassword in the update call."
+          "description": "Ensure the app sets/maintains the document title at runtime using the centralized appConfig so the title reliably reflects \"Hatem23\" across navigations/refreshes without changing existing English UI copy."
         }
       ]
     }
