@@ -63,22 +63,22 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addSkill(skill: string): Promise<void>;
+    addSkillWithPassword(password: string, skill: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    clearRecruiterVisits(): Promise<void>;
-    clearSkills(): Promise<void>;
-    clearVisitorMessages(): Promise<void>;
+    clearRecruiterVisitsWithPassword(password: string): Promise<void>;
+    clearSkillsWithPassword(password: string): Promise<void>;
+    clearVisitorMessagesWithPassword(password: string): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getContent(): Promise<Content>;
-    getRecruiterVisits(): Promise<Array<RecruiterVisit>>;
+    getRecruiterVisitsWithPassword(password: string): Promise<Array<RecruiterVisit>>;
     getSkills(): Promise<Array<string>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getVisitorMessages(): Promise<Array<VisitorMessage>>;
+    getVisitorMessagesWithPassword(password: string): Promise<Array<VisitorMessage>>;
     isCallerAdmin(): Promise<boolean>;
     logRecruiterVisit(isRecruiter: boolean, companyName: string | null): Promise<void>;
-    removeSkill(skill: string): Promise<void>;
+    removeSkillWithPassword(password: string, skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
-    updateContent(newContent: Content): Promise<void>;
+    updateContentWithPassword(password: string, newContent: Content): Promise<void>;
 }

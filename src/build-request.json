@@ -1,72 +1,94 @@
 {
   "kind": "build_request",
-  "title": "Clone existing resume app into a new separate deployment/domain named Hatem23",
+  "title": "Fix owner panel authorization error for Recruiter Visits (password-gated access)",
+  "projectName": "Hatem23",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-35",
-      "text": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
+      "id": "REQ-38",
+      "text": "Fix the \"Authorization Error: Unauthorized: Only admins can view recruiter visits\" in the Owner Access Panel by replacing admin/AccessControl-gated recruiter visit read/clear calls with password-gated backend methods that authorize using the owner panel password \"BirdOnTree3\".",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-1",
-          "msg-user-2"
+          "msg-1"
         ],
         "quotes": [
-          "yes copy the whole project in a new domain that's all",
-          "No the new domain Name should be Hatem23"
+          "Can you please fix this error"
         ]
       },
       "acceptanceCriteria": [
-        "A new, separately accessible deployment exists under the app/domain name \"Hatem23\".",
-        "The existing/original app remains available and unchanged.",
-        "The \"Hatem23\" deployment includes the same frontend pages/sections and the same backend capabilities (recruiter prompt logging, visitor messages, owner panel + CMS, projects, etc.)."
+        "After unlocking the Owner Access Panel with password \"BirdOnTree3\", opening \"Recruiter Visits\" loads the visit list without an authorization error.",
+        "\"Clear all visits\" succeeds after confirmation and the list becomes empty without requiring a page reload.",
+        "If an invalid/empty password is used, the backend traps with \"Unauthorized\" and the UI shows an authorization error message in English."
       ]
     },
     {
-      "id": "REQ-36",
-      "text": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
+      "id": "REQ-39",
+      "text": "Backend: Add password-gated recruiter visit APIs and keep the existing public logging API unchanged. Implement new canister methods that accept an owner password parameter and return/clear recruiter visit logs when (and only when) the password matches \"BirdOnTree3\"; do not require Internet Identity or AccessControl admin permissions for these password-gated methods.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-1"
+          "msg-1"
         ],
         "quotes": [
-          "yes copy the whole project in a new domain that's all"
+          "Can you please fix this error"
         ]
       },
       "acceptanceCriteria": [
-        "New recruiter visits, visitor messages, and CMS edits created in \"Hatem23\" do not affect or appear in the original app, and vice versa."
+        "Backend exposes password-gated methods for (1) listing recruiter visits and (2) clearing recruiter visits, each requiring a password string parameter.",
+        "Calling the password-gated list/clear methods with the correct password returns data / clears data successfully even for anonymous callers.",
+        "Calling the password-gated list/clear methods with an incorrect password traps with an \"Unauthorized\" error.",
+        "Existing public method logRecruiterVisit(isRecruiter, companyName) continues to work for anonymous visitors."
       ]
     },
     {
-      "id": "REQ-37",
-      "text": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
+      "id": "REQ-40",
+      "text": "Frontend: Update Owner Panel recruiter visits data fetching and clearing so that the ownerPassword prop is actually used. The RecruiterVisitsView must call hooks/mutations that pass the unlocked password into the backend password-gated methods, and React Query keys must include the password (or otherwise reliably refetch) after unlocking.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-2"
+          "msg-1"
         ],
         "quotes": [
-          "No the new domain Name should be Hatem23"
+          "Can you please fix this error"
         ]
       },
       "acceptanceCriteria": [
-        "The cloned app’s browser tab/title displays \"Hatem23\" (or clearly includes \"Hatem23\").",
-        "All user-facing UI text remains English."
+        "RecruiterVisitsView no longer calls actor.getRecruiterVisits()/actor.clearRecruiterVisits() directly (or via hooks) without passing ownerPassword.",
+        "useGetRecruiterVisits and useClearRecruiterVisits accept an ownerPassword argument and use it in the backend call.",
+        "After unlocking the owner panel, navigating to Recruiter Visits triggers a successful fetch using the unlocked password (no stale unauthorized result)."
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "text": "Prevent the same admin-only authorization failure across the rest of the Owner Access Panel by adding/using equivalent password-gated backend methods and wiring the frontend to use the unlocked ownerPassword for: Visitor Messages list/clear, Content update, and Skills CRUD/clear (these currently call admin-gated endpoints).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Can you please fix this error"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After unlocking with \"BirdOnTree3\", the Owner Panel can load Visitor Messages without an admin authorization error and can clear messages after confirmation.",
+        "After unlocking with \"BirdOnTree3\", saving changes in \"Edit Website Content\" succeeds without an admin authorization error.",
+        "After unlocking with \"BirdOnTree3\", adding/removing/clearing skills succeeds without an admin authorization error.",
+        "All owner-only password-gated backend methods trap with \"Unauthorized\" when the password is invalid, and the UI displays errors in English."
       ]
     }
   ],
   "constraints": [
-    "Do not rename or replace the existing/original app; create a separate cloned deployment.",
-    "Keep all existing functionality/spec the same in the cloned \"Hatem23\" app unless explicitly requested otherwise.",
-    "Respect the single-actor backend architecture (all Motoko logic remains in backend/main.mo).",
-    "Do not modify any frontend files under frontend/src/components/ui or other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Do not add any email-sending functionality (storing email as part of visitor submissions is allowed; sending is not)."
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
+    "Do not edit files under frontend/src/components/ui (read-only). Compose existing UI components instead.",
+    "Keep all user-facing text in English.",
+    "Do not add email-sending functionality (no outbound email)."
   ],
   "nonGoals": [
-    "Adding new features beyond cloning/separating the deployment under the name \"Hatem23\".",
-    "Changing the resume content, styling theme, or owner password behavior as part of the cloning (except for updating app labeling/metadata to \"Hatem23\")."
+    "Implementing or restoring Internet Identity-based admin gating for the owner panel.",
+    "Adding new public-facing features unrelated to fixing the authorization error.",
+    "Introducing external databases, additional backend services, or third-party auth providers."
   ],
   "imageRequirements": {
     "required": [],

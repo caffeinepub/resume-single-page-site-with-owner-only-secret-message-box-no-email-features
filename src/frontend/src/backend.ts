@@ -146,24 +146,24 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    addSkill(skill: string): Promise<void>;
+    addSkillWithPassword(password: string, skill: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    clearRecruiterVisits(): Promise<void>;
-    clearSkills(): Promise<void>;
-    clearVisitorMessages(): Promise<void>;
+    clearRecruiterVisitsWithPassword(password: string): Promise<void>;
+    clearSkillsWithPassword(password: string): Promise<void>;
+    clearVisitorMessagesWithPassword(password: string): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getContent(): Promise<Content>;
-    getRecruiterVisits(): Promise<Array<RecruiterVisit>>;
+    getRecruiterVisitsWithPassword(password: string): Promise<Array<RecruiterVisit>>;
     getSkills(): Promise<Array<string>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getVisitorMessages(): Promise<Array<VisitorMessage>>;
+    getVisitorMessagesWithPassword(password: string): Promise<Array<VisitorMessage>>;
     isCallerAdmin(): Promise<boolean>;
     logRecruiterVisit(isRecruiter: boolean, companyName: string | null): Promise<void>;
-    removeSkill(skill: string): Promise<void>;
+    removeSkillWithPassword(password: string, skill: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitVisitorMessage(name: string, email: string, message: string): Promise<void>;
-    updateContent(newContent: Content): Promise<void>;
+    updateContentWithPassword(password: string, newContent: Content): Promise<void>;
 }
 import type { RecruiterVisit as _RecruiterVisit, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -182,17 +182,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addSkill(arg0: string): Promise<void> {
+    async addSkillWithPassword(arg0: string, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.addSkill(arg0);
+                const result = await this.actor.addSkillWithPassword(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addSkill(arg0);
+            const result = await this.actor.addSkillWithPassword(arg0, arg1);
             return result;
         }
     }
@@ -210,45 +210,45 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async clearRecruiterVisits(): Promise<void> {
+    async clearRecruiterVisitsWithPassword(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.clearRecruiterVisits();
+                const result = await this.actor.clearRecruiterVisitsWithPassword(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.clearRecruiterVisits();
+            const result = await this.actor.clearRecruiterVisitsWithPassword(arg0);
             return result;
         }
     }
-    async clearSkills(): Promise<void> {
+    async clearSkillsWithPassword(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.clearSkills();
+                const result = await this.actor.clearSkillsWithPassword(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.clearSkills();
+            const result = await this.actor.clearSkillsWithPassword(arg0);
             return result;
         }
     }
-    async clearVisitorMessages(): Promise<void> {
+    async clearVisitorMessagesWithPassword(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.clearVisitorMessages();
+                const result = await this.actor.clearVisitorMessagesWithPassword(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.clearVisitorMessages();
+            const result = await this.actor.clearVisitorMessagesWithPassword(arg0);
             return result;
         }
     }
@@ -294,17 +294,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getRecruiterVisits(): Promise<Array<RecruiterVisit>> {
+    async getRecruiterVisitsWithPassword(arg0: string): Promise<Array<RecruiterVisit>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getRecruiterVisits();
+                const result = await this.actor.getRecruiterVisitsWithPassword(arg0);
                 return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getRecruiterVisits();
+            const result = await this.actor.getRecruiterVisitsWithPassword(arg0);
             return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -336,17 +336,17 @@ export class Backend implements backendInterface {
             return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getVisitorMessages(): Promise<Array<VisitorMessage>> {
+    async getVisitorMessagesWithPassword(arg0: string): Promise<Array<VisitorMessage>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getVisitorMessages();
+                const result = await this.actor.getVisitorMessagesWithPassword(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVisitorMessages();
+            const result = await this.actor.getVisitorMessagesWithPassword(arg0);
             return result;
         }
     }
@@ -378,17 +378,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async removeSkill(arg0: string): Promise<void> {
+    async removeSkillWithPassword(arg0: string, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.removeSkill(arg0);
+                const result = await this.actor.removeSkillWithPassword(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.removeSkill(arg0);
+            const result = await this.actor.removeSkillWithPassword(arg0, arg1);
             return result;
         }
     }
@@ -420,17 +420,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateContent(arg0: Content): Promise<void> {
+    async updateContentWithPassword(arg0: string, arg1: Content): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateContent(arg0);
+                const result = await this.actor.updateContentWithPassword(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateContent(arg0);
+            const result = await this.actor.updateContentWithPassword(arg0, arg1);
             return result;
         }
     }

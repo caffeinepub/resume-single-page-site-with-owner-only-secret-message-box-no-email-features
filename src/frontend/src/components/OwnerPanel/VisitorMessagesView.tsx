@@ -19,8 +19,8 @@ interface VisitorMessagesViewProps {
 }
 
 export default function VisitorMessagesView({ onBack, ownerPassword }: VisitorMessagesViewProps) {
-  const { data: messages, isLoading, error } = useGetVisitorMessages();
-  const clearMutation = useClearVisitorMessages();
+  const { data: messages, isLoading, error } = useGetVisitorMessages(ownerPassword);
+  const clearMutation = useClearVisitorMessages(ownerPassword);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const formatDate = (timestamp: bigint) => {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 21,
+  "projectStateVersion": 23,
   "summary": "Build a modern single-page resume website with the same functionality/spec as the current app, but as a separate cloned project deployed under a new domain/app name \"Hatem23\" (i.e., a new app/canister/domain rather than renaming the existing one).",
   "architectural_notes": [
     "Email collection is now allowed for the visitor message box and recruiter tracking, but the app must not send emails (storage/viewing only).",
@@ -17,9 +17,10 @@
     "Owner panel is still showing the platform Internet Identity login instead of the BirdOnTree3 password prompt (needs full removal of II code and cache-proof deployment).",
     "Visitor message log is not displaying newly submitted messages after typing/submission (persistence/display bug).",
     "Contact info editing (address/email) in the owner/admin panel fails with an \"requires administrator access\" error even after unlocking the panel; owner authorization gating is misapplied/broken for contact update endpoint/UI.",
-    "Owner panel password prompt is rejecting the correct password (BirdOnTree3); owner access is effectively broken (likely due to remaining admin/AccessControl gating in backend/owner actions)."
+    "Owner panel password prompt is rejecting the correct password (BirdOnTree3); owner access is effectively broken (likely due to remaining admin/AccessControl gating in backend/owner actions).",
+    "User reports an unspecified error and requests a fix; error details not provided in conversation."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-modern-single-page-resume-website-for-hatem-alsakhboori-using-the-provided-resume-content-including-sections-for-hero-name-contact-links-education-experience-technical-skills-certifications-leadership-and-hobbies-interests-with-smooth-in-page-navigation-scroll-and-mobile-responsiveness",
@@ -252,6 +253,30 @@
         "REQ-37"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-authorization-error-unauthorized-only-admins-can-view-recruiter-visits-in-the-owner-access-panel-by-replacing-admin-accesscontrol-gated-recruiter-visit-read-clear-calls-with-password-gated-backend-methods-that-authorize-using-the-owner-panel-password-birdontree3",
+      "title": "Fix the \"Authorization Error: Unauthorized: Only admins can view recruiter visits\" in the Owner Access Panel by replacing admin/AccessControl-gated recruiter visit read/clear calls with password-gated backend methods that authorize using the owner panel password \"BirdOnTree3\".",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-frontend-update-owner-panel-recruiter-visits-data-fetching-and-clearing-so-that-the-ownerpassword-prop-is-actually-used-the-recruitervisitsview-must-call-hooks-mutations-that-pass-the-unlocked-password-into-the-backend-password-gated-methods-and-react-query-keys-must-include-the-password-or-otherwise-reliably-refetch-after-unlocking",
+      "title": "Frontend: Update Owner Panel recruiter visits data fetching and clearing so that the ownerPassword prop is actually used. The RecruiterVisitsView must call hooks/mutations that pass the unlocked password into the backend password-gated methods, and React Query keys must include the password (or otherwise reliably refetch) after unlocking.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-prevent-the-same-admin-only-authorization-failure-across-the-rest-of-the-owner-access-panel-by-adding-using-equivalent-password-gated-backend-methods-and-wiring-the-frontend-to-use-the-unlocked-ownerpassword-for-visitor-messages-list-clear-content-update-and-skills-crud-clear-these-currently-call-admin-gated-endpoints",
+      "title": "Prevent the same admin-only authorization failure across the rest of the Owner Access Panel by adding/using equivalent password-gated backend methods and wiring the frontend to use the unlocked ownerPassword for: Visitor Messages list/clear, Content update, and Skills CRUD/clear (these currently call admin-gated endpoints).",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -400,6 +425,14 @@
       "summary": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
       "reqIds": [
         "REQ-36"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Backend: Add password-gated recruiter visit APIs and keep the existing public logging API unchanged. Implement new canister methods that accept an owner password parameter and return/clear recruiter visit logs when (and only when) the password matches \"BirdOnTree3\"; do not require Internet Identity or AccessControl admin permissions for these password-gated methods.",
+      "reqIds": [
+        "REQ-39"
       ],
       "status": "pending"
     }

@@ -19,8 +19,8 @@ interface RecruiterVisitsViewProps {
 }
 
 export default function RecruiterVisitsView({ onBack, ownerPassword }: RecruiterVisitsViewProps) {
-  const { data: visits, isLoading, error } = useGetRecruiterVisits();
-  const clearMutation = useClearRecruiterVisits();
+  const { data: visits, isLoading, error } = useGetRecruiterVisits(ownerPassword);
+  const clearMutation = useClearRecruiterVisits(ownerPassword);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const formatDate = (timestamp: bigint) => {

@@ -1,56 +1,99 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Clone resume app frontend for separate Hatem23 deployment",
+  "title": "Owner panel: wire password-gated methods to eliminate admin-only authorization errors",
   "requirements": [
     {
-      "id": "REQ-35",
-      "summary": "Add frontend-side configuration to support a separately deployable clone named Hatem23 without changing existing app behavior.",
+      "id": "REQ-38",
+      "summary": "Fix Owner Panel Recruiter Visits unauthorized error by switching to password-gated list/clear calls after unlock.",
       "acceptanceCriteria": [
-        "A new, separately accessible deployment exists under the app/domain name \"Hatem23\".",
-        "The existing/original app remains available and unchanged.",
-        "The \"Hatem23\" deployment includes the same frontend pages/sections and the same backend capabilities (recruiter prompt logging, visitor messages, owner panel + CMS, projects, etc.)."
+        "After unlocking the Owner Access Panel with password \"BirdOnTree3\", opening \"Recruiter Visits\" loads the visit list without an authorization error.",
+        "\"Clear all visits\" succeeds after confirmation and the list becomes empty without requiring a page reload.",
+        "If an invalid/empty password is used, the backend traps with \"Unauthorized\" and the UI shows an authorization error message in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/appConfig.ts",
-          "operation": "create",
-          "description": "Create a small app configuration module that centralizes deployment-specific metadata (e.g., app name) using build-time environment variables with sensible defaults for the Hatem23 clone."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useRecruiterVisit.ts",
           "operation": "modify",
-          "description": "Wire the new appConfig into the app so runtime labeling (e.g., document title) can be set based on the cloned deployment configuration while keeping all existing resume UI/sections and flows unchanged."
+          "description": "Update recruiter visits hooks to call the password-gated backend capabilities (getRecruiterVisitsWithPassword / clearRecruiterVisitsWithPassword) and accept an ownerPassword argument. Ensure React Query queryKey includes the ownerPassword (or otherwise guarantees a refetch after unlock) and keep user-facing errors in English."
         },
         {
-          "path": "frontend/.env.hatem23",
-          "operation": "create",
-          "description": "Add a deployment-specific environment file for the Hatem23 clone (e.g., VITE_APP_NAME) to support separate build/deploy configuration for the cloned frontend."
-        },
-        {
-          "path": "frontend/README-Hatem23-deployment.md",
-          "operation": "create",
-          "description": "Document the frontend build-time settings needed for the Hatem23 clone (app name and any required canister/config values) to ensure the cloned deployment points to its own backend and remains separate from the original."
+          "path": "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+          "operation": "modify",
+          "description": "Wire RecruiterVisitsView to pass the unlocked ownerPassword into useGetRecruiterVisits(ownerPassword) and useClearRecruiterVisits(ownerPassword), so list/clear operate via password-gated calls and the view updates immediately after clearing without a reload."
         }
       ]
     },
     {
-      "id": "REQ-37",
-      "summary": "Update cloned app labeling/metadata to display the name Hatem23 while keeping all UI text in English.",
+      "id": "REQ-40",
+      "summary": "Ensure Owner Panel recruiter visits uses ownerPassword-aware hooks/mutations and avoids stale unauthorized cached results after unlock.",
       "acceptanceCriteria": [
-        "The cloned app’s browser tab/title displays \"Hatem23\" (or clearly includes \"Hatem23\").",
-        "All user-facing UI text remains English."
+        "RecruiterVisitsView no longer calls actor.getRecruiterVisits()/actor.clearRecruiterVisits() directly (or via hooks) without passing ownerPassword.",
+        "useGetRecruiterVisits and useClearRecruiterVisits accept an ownerPassword argument and use it in the backend call.",
+        "After unlocking the owner panel, navigating to Recruiter Visits triggers a successful fetch using the unlocked password (no stale unauthorized result)."
       ],
       "file_operations": [
         {
-          "path": "frontend/index.html",
+          "path": "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
           "operation": "modify",
-          "description": "Update the HTML document title metadata so the browser tab/title clearly includes \"Hatem23\" while keeping the document language and user-facing text English."
+          "description": "Adjust owner panel unlock flow to reliably refresh owner-only data after successful password entry (e.g., invalidate recruiterVisits queries in a way that also matches password-scoped keys) so navigation to Recruiter Visits fetches using the unlocked password instead of reusing a stale unauthorized result."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useRecruiterVisit.ts",
           "operation": "modify",
-          "description": "Ensure the app sets/maintains the document title at runtime using the centralized appConfig so the title reliably reflects \"Hatem23\" across navigations/refreshes without changing existing English UI copy."
+          "description": "Ensure recruiter visits React Query keys and enabled conditions account for ownerPassword so the query refetches successfully when the panel is unlocked and the password changes."
+        },
+        {
+          "path": "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+          "operation": "modify",
+          "description": "Remove any remaining unused ownerPassword prop paths by routing all visit list/clear operations through the ownerPassword-aware hooks and displaying backend authorization errors in English."
+        }
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "summary": "Eliminate admin-only authorization failures across the rest of the Owner Access Panel by passing ownerPassword into password-gated owner methods for Visitor Messages, Content update, and Skills management.",
+      "acceptanceCriteria": [
+        "After unlocking with \"BirdOnTree3\", the Owner Panel can load Visitor Messages without an admin authorization error and can clear messages after confirmation.",
+        "After unlocking with \"BirdOnTree3\", saving changes in \"Edit Website Content\" succeeds without an admin authorization error.",
+        "After unlocking with \"BirdOnTree3\", adding/removing/clearing skills succeeds without an admin authorization error.",
+        "All owner-only password-gated backend methods trap with \"Unauthorized\" when the password is invalid, and the UI displays errors in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useVisitorMessages.ts",
+          "operation": "modify",
+          "description": "Update visitor messages hooks to use password-gated backend capabilities (getVisitorMessagesWithPassword / clearVisitorMessagesWithPassword) and accept an ownerPassword argument. Ensure the queryKey includes ownerPassword (or otherwise ensures unlock triggers a refetch) and keep user-facing errors in English."
+        },
+        {
+          "path": "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "operation": "modify",
+          "description": "Wire VisitorMessagesView to pass ownerPassword into useGetVisitorMessages(ownerPassword) and useClearVisitorMessages(ownerPassword), ensuring list/clear work after unlock and the list updates immediately after clearing."
+        },
+        {
+          "path": "frontend/src/hooks/useContent.ts",
+          "operation": "modify",
+          "description": "Update the content update mutation hook to accept ownerPassword and call the password-gated backend capability (updateContentWithPassword). Keep getContent unchanged."
+        },
+        {
+          "path": "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+          "operation": "modify",
+          "description": "Pass ownerPassword into the updated content mutation hook (useUpdateContent(ownerPassword)) so saving changes uses password-gated authorization and surfaces errors in English."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update skills management hooks to accept ownerPassword and use password-gated backend capabilities (addSkillWithPassword / removeSkillWithPassword / clearSkillsWithPassword). Keep getSkills unchanged."
+        },
+        {
+          "path": "frontend/src/components/OwnerPanel/SkillsEditor.tsx",
+          "operation": "modify",
+          "description": "Wire SkillsEditor to pass ownerPassword into the updated skills hooks and add a password-gated \"clear all skills\" action with confirmation so Skills CRUD/clear works without admin gating and errors remain in English."
+        },
+        {
+          "path": "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
+          "operation": "modify",
+          "description": "On successful unlock, invalidate owner-only data queries broadly enough to refresh password-scoped Visitor Messages and Recruiter Visits, preventing cached unauthorized results from persisting across the Owner Access Panel."
         }
       ]
     }

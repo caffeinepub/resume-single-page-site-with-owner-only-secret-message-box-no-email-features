@@ -63,24 +63,30 @@ export interface VisitorMessage {
 }
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addSkill' : ActorMethod<[string], undefined>,
+  'addSkillWithPassword' : ActorMethod<[string, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'clearRecruiterVisits' : ActorMethod<[], undefined>,
-  'clearSkills' : ActorMethod<[], undefined>,
-  'clearVisitorMessages' : ActorMethod<[], undefined>,
+  'clearRecruiterVisitsWithPassword' : ActorMethod<[string], undefined>,
+  'clearSkillsWithPassword' : ActorMethod<[string], undefined>,
+  'clearVisitorMessagesWithPassword' : ActorMethod<[string], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getContent' : ActorMethod<[], Content>,
-  'getRecruiterVisits' : ActorMethod<[], Array<RecruiterVisit>>,
+  'getRecruiterVisitsWithPassword' : ActorMethod<
+    [string],
+    Array<RecruiterVisit>
+  >,
   'getSkills' : ActorMethod<[], Array<string>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getVisitorMessages' : ActorMethod<[], Array<VisitorMessage>>,
+  'getVisitorMessagesWithPassword' : ActorMethod<
+    [string],
+    Array<VisitorMessage>
+  >,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'logRecruiterVisit' : ActorMethod<[boolean, [] | [string]], undefined>,
-  'removeSkill' : ActorMethod<[string], undefined>,
+  'removeSkillWithPassword' : ActorMethod<[string, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitVisitorMessage' : ActorMethod<[string, string, string], undefined>,
-  'updateContent' : ActorMethod<[Content], undefined>,
+  'updateContentWithPassword' : ActorMethod<[string, Content], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

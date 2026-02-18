@@ -47,14 +47,14 @@ export function useGetSkills() {
   });
 }
 
-export function useAddSkill() {
+export function useAddSkill(ownerPassword: string) {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (skill: string) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.addSkill(skill);
+      return actor.addSkillWithPassword(ownerPassword, skill);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -62,14 +62,14 @@ export function useAddSkill() {
   });
 }
 
-export function useRemoveSkill() {
+export function useRemoveSkill(ownerPassword: string) {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (skill: string) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.removeSkill(skill);
+      return actor.removeSkillWithPassword(ownerPassword, skill);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -77,14 +77,14 @@ export function useRemoveSkill() {
   });
 }
 
-export function useClearSkills() {
+export function useClearSkills(ownerPassword: string) {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.clearSkills();
+      return actor.clearSkillsWithPassword(ownerPassword);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });

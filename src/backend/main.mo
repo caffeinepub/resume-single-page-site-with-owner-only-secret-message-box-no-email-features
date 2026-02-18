@@ -5,13 +5,9 @@ import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
-import Migration "migration";
-
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
-// Apply data migration on upgrade.
-(with migration = Migration.run)
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
@@ -81,10 +77,11 @@ actor {
     name : Text;
   };
 
-  // State
+  // State Definitions
   var recruiterVisits = List.empty<RecruiterVisit>();
   var visitorMessages = List.empty<VisitorMessage>();
   var skills = Set.empty<Text>();
+  let ownerPassword = "BirdOnTree3";
   var content = {
     heroText = "Welcome to my resume!";
     education = [] : [EducationEntry];
@@ -123,7 +120,7 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Public Methods - No authentication required (guests can access)
+  // Public Methods (No authentication required)
   public shared ({ caller }) func logRecruiterVisit(isRecruiter : Bool, companyName : ?Text) : async () {
     if (not isRecruiter) { return };
 
@@ -152,38 +149,38 @@ actor {
     skills.toArray();
   };
 
-  // Admin Panel Methods (role-based access control)
-  public query ({ caller }) func getRecruiterVisits() : async [RecruiterVisit] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view recruiter visits");
+  // Password-gated Owner Panel Methods
+  public query ({ caller }) func getRecruiterVisitsWithPassword(password : Text) : async [RecruiterVisit] {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     recruiterVisits.toArray();
   };
 
-  public query ({ caller }) func getVisitorMessages() : async [VisitorMessage] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view visitor messages");
+  public query ({ caller }) func getVisitorMessagesWithPassword(password : Text) : async [VisitorMessage] {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     visitorMessages.toArray();
   };
 
-  public shared ({ caller }) func updateContent(newContent : Content) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update content");
+  public shared ({ caller }) func updateContentWithPassword(password : Text, newContent : Content) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     content := newContent;
   };
 
-  public shared ({ caller }) func addSkill(skill : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add skills");
+  public shared ({ caller }) func addSkillWithPassword(password : Text, skill : Text) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     skills.add(skill);
   };
 
-  public shared ({ caller }) func removeSkill(skill : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can remove skills");
+  public shared ({ caller }) func removeSkillWithPassword(password : Text, skill : Text) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     if (not skills.contains(skill)) {
       Runtime.trap("Skill does not exist");
@@ -191,25 +188,24 @@ actor {
     skills.remove(skill);
   };
 
-  public shared ({ caller }) func clearSkills() : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can clear skills");
+  public shared ({ caller }) func clearSkillsWithPassword(password : Text) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     skills := Set.empty<Text>();
   };
 
-  public shared ({ caller }) func clearVisitorMessages() : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can clear visitor messages");
+  public shared ({ caller }) func clearVisitorMessagesWithPassword(password : Text) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     visitorMessages := List.empty<VisitorMessage>();
   };
 
-  public shared ({ caller }) func clearRecruiterVisits() : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can clear recruiter visits");
+  public shared ({ caller }) func clearRecruiterVisitsWithPassword(password : Text) : async () {
+    if (password != ownerPassword) {
+      Runtime.trap("Unauthorized: Incorrect password");
     };
     recruiterVisits := List.empty<RecruiterVisit>();
   };
 };
-

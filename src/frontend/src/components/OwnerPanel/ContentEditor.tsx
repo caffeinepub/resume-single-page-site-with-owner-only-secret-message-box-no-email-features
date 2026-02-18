@@ -18,7 +18,7 @@ interface ContentEditorProps {
 export default function ContentEditor({ onBack, ownerPassword }: ContentEditorProps) {
   const { data: content, isLoading: contentLoading } = useGetContent();
   const { data: skills, isLoading: skillsLoading } = useGetSkills();
-  const updateMutation = useUpdateContent();
+  const updateMutation = useUpdateContent(ownerPassword);
 
   const [draftContent, setDraftContent] = useState<Content | null>(null);
   const [draftSkills, setDraftSkills] = useState<string[]>([]);

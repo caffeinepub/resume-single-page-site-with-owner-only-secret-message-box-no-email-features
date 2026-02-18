@@ -1,72 +1,87 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-07T00:09:41.163Z",
+  "generatedAt": "2026-02-17T16:42:59.916Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 2,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-35",
-        "summary": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
+        "id": "REQ-38",
+        "summary": "Fix the \"Authorization Error: Unauthorized: Only admins can view recruiter visits\" in the Owner Access Panel by replacing admin/AccessControl-gated recruiter visit read/clear calls with password-gated backend methods that authorize using the owner panel password \"BirdOnTree3\".",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/appConfig.ts",
-          "frontend/src/App.tsx",
-          "frontend/.env.hatem23",
-          "frontend/README-Hatem23-deployment.md"
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/appConfig.ts",
-          "frontend/src/App.tsx",
-          "frontend/.env.hatem23",
-          "frontend/README-Hatem23-deployment.md"
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
         ]
       },
       {
-        "id": "REQ-36",
-        "summary": "Ensure the \"Hatem23\" deployment has independent backend state from the original app (no shared persisted data), so that logs, messages, and CMS edits in one deployment do not appear in the other.",
+        "id": "REQ-39",
+        "summary": "Backend: Add password-gated recruiter visit APIs and keep the existing public logging API unchanged. Implement new canister methods that accept an owner password parameter and return/clear recruiter visit logs when (and only when) the password matches \"BirdOnTree3\"; do not require Internet Identity or AccessControl admin permissions for these password-gated methods.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-37",
-        "summary": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
+        "id": "REQ-40",
+        "summary": "Frontend: Update Owner Panel recruiter visits data fetching and clearing so that the ownerPassword prop is actually used. The RecruiterVisitsView must call hooks/mutations that pass the unlocked password into the backend password-gated methods, and React Query keys must include the password (or otherwise reliably refetch) after unlocking.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html",
-          "frontend/src/App.tsx"
+          "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx",
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html",
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useRecruiterVisit.ts",
+          "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx"
+        ]
+      },
+      {
+        "id": "REQ-41",
+        "summary": "Prevent the same admin-only authorization failure across the rest of the Owner Access Panel by adding/using equivalent password-gated backend methods and wiring the frontend to use the unlocked ownerPassword for: Visitor Messages list/clear, Content update, and Skills CRUD/clear (these currently call admin-gated endpoints).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useVisitorMessages.ts",
+          "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "frontend/src/hooks/useContent.ts",
+          "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/OwnerPanel/SkillsEditor.tsx",
+          "frontend/src/components/OwnerPanel/OwnerAccessPanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useVisitorMessages.ts",
+          "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+          "frontend/src/hooks/useContent.ts",
+          "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/OwnerPanel/SkillsEditor.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/.env.hatem23",
-    "frontend/README-Hatem23-deployment.md",
-    "frontend/index.html",
-    "frontend/src/App.tsx",
-    "frontend/src/appConfig.ts",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
     "frontend/src/components/OwnerPanel/ContentEditor.tsx",
     "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
     "frontend/src/components/OwnerPanel/SkillsEditor.tsx",
     "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+    "frontend/src/config.ts",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useContent.ts",

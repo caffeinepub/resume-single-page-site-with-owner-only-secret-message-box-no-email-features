@@ -15,14 +15,14 @@ export function useGetContent() {
   });
 }
 
-export function useUpdateContent() {
+export function useUpdateContent(ownerPassword: string) {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (content: Content) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateContent(content);
+      return actor.updateContentWithPassword(ownerPassword, content);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content'] });

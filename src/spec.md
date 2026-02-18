@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Create a new, separate deployment/domain named "Hatem23" by cloning the existing resume-site app, keeping the original app unchanged.
+**Goal:** Remove admin-only authorization failures in the Owner Access Panel by using password-gated backend methods (owner panel password: "BirdOnTree3") for owner-only data/actions, starting with Recruiter Visits.
 
 **Planned changes:**
-- Clone/copy the entire current resume-site project into a brand-new, separately accessible deployment named "Hatem23".
-- Ensure the "Hatem23" deployment uses independent backend persisted state (no shared logs/messages/CMS data with the original).
-- Update app labeling/metadata in the cloned deployment to reflect the name "Hatem23" (e.g., HTML document title) while keeping all user-facing UI text in English.
+- Backend: Add new password-gated canister methods to list and clear Recruiter Visits, authorizing solely by matching the provided owner password; keep the existing public `logRecruiterVisit(isRecruiter, companyName)` API unchanged.
+- Frontend: Update Recruiter Visits view and related React Query hooks/mutations to pass the unlocked `ownerPassword` into the new password-gated backend methods; ensure refetching works after unlocking (e.g., query keys include password or otherwise reliably refetch).
+- Backend + Frontend: Apply the same password-gated pattern across other Owner Panel features currently using admin-gated endpoints: Visitor Messages list/clear, Edit Website Content save, Skills CRUD/clear.
+- Error handling: For invalid/empty passwords, backend traps with "Unauthorized" and the UI shows an English authorization error message.
 
-**User-visible outcome:** Users can access a separate "Hatem23" version of the resume app with the same pages and backend capabilities as the original, but with its own independent data and updated app title/labeling.
+**User-visible outcome:** After unlocking the Owner Access Panel with password "BirdOnTree3", the owner can view and clear Recruiter Visits (without page reload), manage Visitor Messages, edit website content, and manage skills without seeing admin authorization errors; incorrect passwords result in an "Unauthorized" error shown in English.

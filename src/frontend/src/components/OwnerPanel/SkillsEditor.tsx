@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
-import { useAddSkill, useRemoveSkill } from '../../hooks/useQueries';
+import { useAddSkill, useRemoveSkill, useClearSkills } from '../../hooks/useQueries';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 
 interface SkillsEditorProps {
   skills: string[];
@@ -23,9 +24,11 @@ export default function SkillsEditor({ skills, onChange, ownerPassword }: Skills
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
-  const addMutation = useAddSkill();
-  const removeMutation = useRemoveSkill();
+  const addMutation = useAddSkill(ownerPassword);
+  const removeMutation = useRemoveSkill(ownerPassword);
+  const clearMutation = useClearSkills(ownerPassword);
 
   const handleAdd = async () => {
     if (!newSkill.trim()) return;
@@ -82,9 +85,40 @@ export default function SkillsEditor({ skills, onChange, ownerPassword }: Skills
     }
   };
 
+  const handleClearAll = async () => {
+    try {
+      await clearMutation.mutateAsync();
+      onChange([]);
+      setShowClearDialog(false);
+    } catch (err) {
+      console.error('Failed to clear skills:', err);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h4 className="text-lg font-semibold text-navy mb-4">Skills</h4>
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-lg font-semibold text-navy">Skills</h4>
+        {skills.length > 0 && (
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setShowClearDialog(true)}
+            disabled={clearMutation.isPending}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {clearMutation.isPending ? 'Clearing...' : 'Clear all'}
+          </Button>
+        )}
+      </div>
+
+      {clearMutation.isError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <p className="text-red-800 text-sm">
+            {clearMutation.error instanceof Error ? clearMutation.error.message : 'Failed to clear skills. Please try again.'}
+          </p>
+        </div>
+      )}
 
       {/* Add new skill */}
       <div className="flex gap-2 mb-4">
@@ -178,6 +212,26 @@ export default function SkillsEditor({ skills, onChange, ownerPassword }: Skills
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear all skills?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. All skills will be permanently deleted from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearAll}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Clear all skills
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

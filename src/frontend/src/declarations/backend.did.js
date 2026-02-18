@@ -64,28 +64,36 @@ export const VisitorMessage = IDL.Record({
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addSkill' : IDL.Func([IDL.Text], [], []),
+  'addSkillWithPassword' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'clearRecruiterVisits' : IDL.Func([], [], []),
-  'clearSkills' : IDL.Func([], [], []),
-  'clearVisitorMessages' : IDL.Func([], [], []),
+  'clearRecruiterVisitsWithPassword' : IDL.Func([IDL.Text], [], []),
+  'clearSkillsWithPassword' : IDL.Func([IDL.Text], [], []),
+  'clearVisitorMessagesWithPassword' : IDL.Func([IDL.Text], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getContent' : IDL.Func([], [Content], ['query']),
-  'getRecruiterVisits' : IDL.Func([], [IDL.Vec(RecruiterVisit)], ['query']),
+  'getRecruiterVisitsWithPassword' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(RecruiterVisit)],
+      ['query'],
+    ),
   'getSkills' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'getVisitorMessages' : IDL.Func([], [IDL.Vec(VisitorMessage)], ['query']),
+  'getVisitorMessagesWithPassword' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(VisitorMessage)],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'logRecruiterVisit' : IDL.Func([IDL.Bool, IDL.Opt(IDL.Text)], [], []),
-  'removeSkill' : IDL.Func([IDL.Text], [], []),
+  'removeSkillWithPassword' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-  'updateContent' : IDL.Func([Content], [], []),
+  'updateContentWithPassword' : IDL.Func([IDL.Text, Content], [], []),
 });
 
 export const idlInitArgs = [];
@@ -147,28 +155,36 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addSkill' : IDL.Func([IDL.Text], [], []),
+    'addSkillWithPassword' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'clearRecruiterVisits' : IDL.Func([], [], []),
-    'clearSkills' : IDL.Func([], [], []),
-    'clearVisitorMessages' : IDL.Func([], [], []),
+    'clearRecruiterVisitsWithPassword' : IDL.Func([IDL.Text], [], []),
+    'clearSkillsWithPassword' : IDL.Func([IDL.Text], [], []),
+    'clearVisitorMessagesWithPassword' : IDL.Func([IDL.Text], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getContent' : IDL.Func([], [Content], ['query']),
-    'getRecruiterVisits' : IDL.Func([], [IDL.Vec(RecruiterVisit)], ['query']),
+    'getRecruiterVisitsWithPassword' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(RecruiterVisit)],
+        ['query'],
+      ),
     'getSkills' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'getVisitorMessages' : IDL.Func([], [IDL.Vec(VisitorMessage)], ['query']),
+    'getVisitorMessagesWithPassword' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(VisitorMessage)],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'logRecruiterVisit' : IDL.Func([IDL.Bool, IDL.Opt(IDL.Text)], [], []),
-    'removeSkill' : IDL.Func([IDL.Text], [], []),
+    'removeSkillWithPassword' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitVisitorMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-    'updateContent' : IDL.Func([Content], [], []),
+    'updateContentWithPassword' : IDL.Func([IDL.Text, Content], [], []),
   });
 };
 

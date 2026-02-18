@@ -2,13 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-brand-new-separate-application-deployment-new-project-canister-domain-named-hatem23-by-cloning-copying-the-entire-current-resume-site-project-so-that-the-new-deployment-has-the-same-functionality-ui-and-backend-behavior-as-the-existing-app",
-      "featureTitle": "Create a brand-new, separate application deployment (new project/canister/domain) named \"Hatem23\" by cloning/copying the entire current resume-site project so that the new deployment has the same functionality, UI, and backend behavior as the existing app.",
+      "featureId": "feature-fix-the-authorization-error-unauthorized-only-admins-can-view-recruiter-visits-in-the-owner-access-panel-by-replacing-admin-accesscontrol-gated-recruiter-visit-read-clear-calls-with-password-gated-backend-methods-that-authorize-using-the-owner-panel-password-birdontree3",
+      "featureTitle": "Fix the \"Authorization Error: Unauthorized: Only admins can view recruiter visits\" in the Owner Access Panel by replacing admin/AccessControl-gated recruiter visit read/clear calls with password-gated backend methods that authorize using the owner panel password \"BirdOnTree3\".",
       "files": [
-        "frontend/.env.hatem23",
-        "frontend/README-Hatem23-deployment.md",
-        "frontend/src/App.tsx",
-        "frontend/src/appConfig.ts"
+        "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+        "frontend/src/hooks/useRecruiterVisit.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -19,16 +17,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-35"
+        "REQ-38"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-cloned-app-s-visible-app-labeling-metadata-to-reflect-the-new-app-name-hatem23-where-applicable-for-example-the-html-document-title-while-keeping-all-user-facing-text-in-english",
-      "featureTitle": "Update the cloned app’s visible app labeling/metadata to reflect the new app name \"Hatem23\" where applicable (for example, the HTML document title), while keeping all user-facing text in English.",
+      "featureId": "feature-frontend-update-owner-panel-recruiter-visits-data-fetching-and-clearing-so-that-the-ownerpassword-prop-is-actually-used-the-recruitervisitsview-must-call-hooks-mutations-that-pass-the-unlocked-password-into-the-backend-password-gated-methods-and-react-query-keys-must-include-the-password-or-otherwise-reliably-refetch-after-unlocking",
+      "featureTitle": "Frontend: Update Owner Panel recruiter visits data fetching and clearing so that the ownerPassword prop is actually used. The RecruiterVisitsView must call hooks/mutations that pass the unlocked password into the backend password-gated methods, and React Query keys must include the password (or otherwise reliably refetch) after unlocking.",
       "files": [
-        "frontend/index.html",
-        "frontend/src/App.tsx"
+        "frontend/src/components/OwnerPanel/RecruiterVisitsView.tsx",
+        "frontend/src/hooks/useRecruiterVisit.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -39,7 +37,31 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-37"
+        "REQ-40"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-prevent-the-same-admin-only-authorization-failure-across-the-rest-of-the-owner-access-panel-by-adding-using-equivalent-password-gated-backend-methods-and-wiring-the-frontend-to-use-the-unlocked-ownerpassword-for-visitor-messages-list-clear-content-update-and-skills-crud-clear-these-currently-call-admin-gated-endpoints",
+      "featureTitle": "Prevent the same admin-only authorization failure across the rest of the Owner Access Panel by adding/using equivalent password-gated backend methods and wiring the frontend to use the unlocked ownerPassword for: Visitor Messages list/clear, Content update, and Skills CRUD/clear (these currently call admin-gated endpoints).",
+      "files": [
+        "frontend/src/components/OwnerPanel/ContentEditor.tsx",
+        "frontend/src/components/OwnerPanel/SkillsEditor.tsx",
+        "frontend/src/components/OwnerPanel/VisitorMessagesView.tsx",
+        "frontend/src/hooks/useContent.ts",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/hooks/useVisitorMessages.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-41"
       ],
       "confidence": "high"
     }
